@@ -32,7 +32,8 @@ public class MazeRenderer : MonoBehaviour
 
     public Vector3 startPosition = new Vector3(0, 0, 0);
 
-    private Camera camera;
+    [SerializeField]
+    private GameObject player;
 
     //Cell size
     [SerializeField]
@@ -71,8 +72,8 @@ public class MazeRenderer : MonoBehaviour
                         enter.position = position + new Vector3(-size / 2, 0, 0);
                         enter.rotation = Quaternion.Euler(0, 90, 0);
                         startPosition = enter.position;
-                        Camera cameraTest = Camera.main;
-                        cameraTest.transform.SetParent(enter);                        
+                        player.transform.position = new Vector3(startPosition.x, startPosition.y + (float)0.50, startPosition.z);
+                        player.transform.rotation = Quaternion.Euler(0, 90, 0);
                     }
 
                     if (i == width - 1)
