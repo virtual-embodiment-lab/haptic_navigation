@@ -105,6 +105,7 @@ public static class MazeGenerator
                 VisitedPosStack.Push(neighborPos);
             }
         }
+      
         return maze;
     }
 

@@ -18,6 +18,9 @@ public class NavigationPath : MonoBehaviour
     {
         NavMesh.CalculatePath(transform.position, Destination.position, NavMesh.AllAreas, navPath);
         for (int i = 0; i < navPath.corners.Length - 1; i++)
+        {
             Debug.DrawLine(navPath.corners[i], navPath.corners[i + 1], Color.white);
+            
+        }
     }
 }
