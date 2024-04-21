@@ -101,10 +101,11 @@ public class MazeGenerator : MonoBehaviour
 
                 // Glow
                 /*Debug.Log(path.Count);*/
-               /* if(path.Contains(new Vector2Int(x, y))){
-                    *//*Debug.Log($"({x},{y})");*//*
-                    tile.GetComponent<Renderer>().material = glowMaterial; 
-                }*/
+                if (path.Contains(new Vector2Int(x, y)))
+                {
+                    Debug.Log($"({x},{y})");
+                    tile.GetComponent<Renderer>().material = glowMaterial;
+                }
 
                 // Check if the position is on the boundary of the grid
                 if (x == 0 || x == bounds.x - 1 || y == 0 || y == bounds.y - 1)
