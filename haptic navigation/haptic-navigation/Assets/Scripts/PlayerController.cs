@@ -7,9 +7,10 @@ using System.Linq;
 public class PlayerController : MonoBehaviour
 {
     public CharacterController characterController;
-    public float speed = 6f;
-    public float turnSmoothTime = 0.1f;
+    public float speed = 1f;
+    public float turnSmoothTime = 1f;
     float turnSmoothVelocity;
+    public float lastHorizontalInput;
     List<Vector2Int> path;
 
     void Start()
@@ -18,53 +19,79 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        /*  How Movement Works: Players Presses WASD which collects "Horizontal" and "Vertical" axis information, so that player can rotate 
+            Then Player presses space bar to actually move forward.
+        */
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
-        if(direction .magnitude < speed)
+        if(direction.magnitude >= 0.1f)
         {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) *Mathf.Rad2Deg;
+            if (Mathf.Sign(horizontal) != Mathf.Sign(lastHorizontalInput)) // prevents the delay in the movement when abruptly turning
+            {
+                turnSmoothVelocity = 0;
+            }
+
+            // Sets the rotation of the character 
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) *Mathf.Rad2Deg + transform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
-            characterController.Move(direction * speed * Time.deltaTime);
-  
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
         }
+
+        lastHorizontalInput = horizontal;
+
+        // Sets the movement of the character
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Vector3 moveDir = transform.forward;
+            characterController.Move(moveDir.normalized * speed * Time.deltaTime);
+        }
+       
         CheckAndGuidePath();
     }
 
 
-void CheckAndGuidePath()
-{
-        Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z));
-        if (!path.Contains(currentPos))
+    void CheckAndGuidePath()
     {
-        Vector2Int nearestPoint = FindNearestPathPoint(currentPos);
-        Vector2Int directionVector = nearestPoint - currentPos;
-        ProvideDirection(directionVector);
-    }
-}
+            /* Compares the path the player is on to the actual optimal path and recommends adjustments to player direction.*/
 
-Vector2Int FindNearestPathPoint(Vector2Int currentPos)
-{
-    Vector2Int nearestPoint = new Vector2Int();
-    float minDistance = float.MaxValue;
-
-    foreach (Vector2Int point in path)
-    {
-        float distance = Vector2.Distance(currentPos, point);
-        if (distance < minDistance)
+            Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z)); // discretizes the current player position
+            if (!path.Contains(currentPos))
         {
-            minDistance = distance;
-            nearestPoint = point;
+            Vector2Int nearestPoint = FindNearestPathPoint(currentPos);
+            Vector2Int directionVector = nearestPoint - currentPos;
+            ProvideDirection(directionVector);
         }
     }
-    return nearestPoint;
-}
+
+    Vector2Int FindNearestPathPoint(Vector2Int currentPos)
+    {
+        /* Checks the set of points in `path` and finds the closest one to `currentPos`.*/
+
+        Vector2Int nearestPoint = new Vector2Int();
+        float minDistance = float.MaxValue;
+
+        foreach (Vector2Int point in path)
+        {
+            float distance = Vector2.Distance(currentPos, point);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearestPoint = point;
+            }
+        }
+        return nearestPoint;
+    }
 
     void ProvideDirection(Vector2Int directionVector)
     {
-        if (Mathf.Abs(directionVector.x) > Mathf.Abs(directionVector.y))
+        /*Depending on the `directionVector` of the player, this function gives Haptic Feedback to player
+         * Remember when subtracting the player `currentPos` and the `nearestPoint` The player is the base.
+         */
+
+        if (Mathf.Abs(directionVector.x) > Mathf.Abs(directionVector.y)) // if mag(x_coord) is > mag(y_coord) move horizontally
         {
             if (directionVector.x > 0)
             {
@@ -75,7 +102,7 @@ Vector2Int FindNearestPathPoint(Vector2Int currentPos)
                 Debug.Log("Move left");
             }
         }
-        else
+        else // if mag(x_coord) is < mag(y_coord) move vertically
         {
             if (directionVector.y > 0)
             {

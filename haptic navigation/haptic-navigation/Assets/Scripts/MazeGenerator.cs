@@ -12,6 +12,12 @@ public class MazeGenerator : MonoBehaviour
     public GameObject cubePrefab;
     public GameObject boundPrefab;
     private bool[,] gridOccupied = new bool[10, 10]; // Track occupied positions
+
+
+    /* Currently there are two mazes represented by the:
+        paths[] list: path[0] gives solution path to maze0 and path[1] gives solution path to maze1 ... 
+        nonwalkables[] list: nonwalkables[0] gives the wall blocks to maze0 and nonwalkablesh[1] gives the wall blocks to maze1 ... */
+
     public static Vector2Int[][] paths = new Vector2Int[][]
     {
       new Vector2Int[] {
@@ -28,7 +34,7 @@ public class MazeGenerator : MonoBehaviour
         new Vector2Int(6, 6), new Vector2Int(6, 7), new Vector2Int(6, 8), new Vector2Int(6, 9),
         new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9)
        }
-    };
+    }; // List of solution paths
     public static Vector2Int[][] nonwalkables = new Vector2Int[][]
     {
         new Vector2Int[] {
@@ -54,31 +60,32 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(0, 8), new Vector2Int(3, 8), new Vector2Int(5, 8), new Vector2Int(7, 8), new Vector2Int(8, 8), new Vector2Int(9, 8),
             new Vector2Int(0, 9), new Vector2Int(3, 9), new Vector2Int(5, 9)
         }
-    };
+    }; // List of Wall Blocks
     public static int choice;
     public enum MazeType
     {
-        Maze1, Maze2
+        Maze0, Maze1
     }
     public MazeType mazeType;
 
 
-    // Start is called before the first frame update
+    // I called this Awake function so the PlayerScript can collect the solution path it needs before startup.
     private void Awake()
     {
-        choice = (mazeType == MazeType.Maze1) ? 0 : 1;
+        choice = (mazeType == MazeType.Maze0) ? 0 : 1;
     }
 
     void Start()
     {
         
-        DefinePaths();
+        DrawGrid();
         GenerateBounds();
 
     }
-    void DefinePaths()
+    void DrawGrid()
     {
-        // Mark the grid positions of the paths as occupied
+        /*Depending on the `choice` it draws the specified grid*/
+
         foreach (var point in nonwalkables[choice])
         {
             Instantiate(cubePrefab, new Vector3(point.x, 0, point.y), Quaternion.identity);
@@ -87,6 +94,10 @@ public class MazeGenerator : MonoBehaviour
 
     void GenerateBounds()
     {
+        /* Very Long and Convoluted function that essentially just draws the borders and ground of the maze. 
+         * The most important take away is that TO LIGHT UP THE SOLUTION PATH TO THE MAZE uncomment the block that says " GLOW" */
+
+
         List<Vector2Int> path = paths[choice].ToList();
         Renderer prefabRenderer = cubePrefab.GetComponent<Renderer>();
         float offset = (prefabRenderer.bounds.size.x)/2;
@@ -99,13 +110,12 @@ public class MazeGenerator : MonoBehaviour
                 // Instantiate floor at every grid position
                 GameObject tile = Instantiate(boundPrefab, new Vector3(x, -offset, y), Quaternion.identity);
 
-                // Glow
-                /*Debug.Log(path.Count);*/
-                if (path.Contains(new Vector2Int(x, y)))
+                // GLOW - UNCOMMENT TO LIGHT UP SOLUTION PATH
+               /* if (path.Contains(new Vector2Int(x, y)))
                 {
-                    Debug.Log($"({x},{y})");
                     tile.GetComponent<Renderer>().material = glowMaterial;
-                }
+                }*/
+               // GLOW 
 
                 // Check if the position is on the boundary of the grid
                 if (x == 0 || x == bounds.x - 1 || y == 0 || y == bounds.y - 1)
