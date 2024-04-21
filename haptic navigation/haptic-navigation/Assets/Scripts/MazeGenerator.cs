@@ -1,211 +1,143 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+
+using Unity.VisualScripting;
 using UnityEngine;
-using System;
-using UnityEngine.UIElements;
-using System.Security.Cryptography;
 
-[Flags]
-public enum WallState
+public class MazeGenerator : MonoBehaviour
 {
-    // Bit representation of the walls
-    // 0000 -> No Walls
-    // 1111 -> Walls: Left, Right, Front, and Back
-    Left = 1, // 0001
-    Right = 2, // 0010
-    Front = 4, // 0100
-    Rear = 8, // 1000
-
-    //Recursive backtracking
-    //To keep track of which cells have been visited
-    Visited = 128, //1000 000
-}
-
-//To keep track where we are in the maze, we need Position
-public struct Position
-{
-    public int X;
-    public int Y;
-}
-
-//To keep track of the walls been broken, we need WallBreak
-public struct Neighbor
-{
-    //Position of Neighbor
-    public Position Position;
-    // Wall shared with the neighbor
-    public WallState SharedWall;
-}
-
-public static class MazeGenerator
-{
-    //A function that returns the opposite side of the SharedWall
-    private static WallState GetOppositeWall(WallState wall)
+    public Material glowMaterial;
+    public GameObject cubePrefab;
+    public GameObject boundPrefab;
+    private bool[,] gridOccupied = new bool[10, 10]; // Track occupied positions
+    public static Vector2Int[][] paths = new Vector2Int[][]
     {
-        switch (wall)
+      new Vector2Int[] {
+        new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0), new Vector2Int(2, 1),
+        new Vector2Int(2, 2), new Vector2Int(3, 2), new Vector2Int(3, 3), new Vector2Int(3, 4),
+        new Vector2Int(3, 5), new Vector2Int(4, 5), new Vector2Int(4, 6), new Vector2Int(5, 6),
+        new Vector2Int(6, 6), new Vector2Int(6, 7), new Vector2Int(6, 8), new Vector2Int(6, 9),
+        new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9)
+    },
+      new Vector2Int[] {
+        new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0), new Vector2Int(2, 1),
+        new Vector2Int(2, 2), new Vector2Int(3, 2), new Vector2Int(3, 3), new Vector2Int(3, 4),
+        new Vector2Int(3, 5), new Vector2Int(4, 5), new Vector2Int(4, 6), new Vector2Int(5, 6),
+        new Vector2Int(6, 6), new Vector2Int(6, 7), new Vector2Int(6, 8), new Vector2Int(6, 9),
+        new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9)
+       }
+    };
+    public static Vector2Int[][] nonwalkables = new Vector2Int[][]
+    {
+        new Vector2Int[] {
+            new Vector2Int(5, 0), new Vector2Int(9, 0), new Vector2Int(1, 1), new Vector2Int(3, 1),
+            new Vector2Int(4, 1), new Vector2Int(5, 1), new Vector2Int(7, 1), new Vector2Int(4, 2),
+            new Vector2Int(7, 2), new Vector2Int(9, 2), new Vector2Int(1, 3), new Vector2Int(2, 3),
+            new Vector2Int(6, 3), new Vector2Int(7, 3), new Vector2Int(9, 3), new Vector2Int(1, 4),
+            new Vector2Int(2, 4), new Vector2Int(4, 4), new Vector2Int(5, 4), new Vector2Int(1, 5),
+            new Vector2Int(5, 5), new Vector2Int(7, 5), new Vector2Int(3, 6), new Vector2Int(9, 6),
+            new Vector2Int(1, 7), new Vector2Int(5, 7), new Vector2Int(7, 7), new Vector2Int(0, 8),
+            new Vector2Int(3, 8), new Vector2Int(5, 8), new Vector2Int(7, 8), new Vector2Int(8, 8),
+            new Vector2Int(0, 9), new Vector2Int(3, 9), new Vector2Int(5, 9)
+        },
+        new Vector2Int[] {
+            new Vector2Int(5, 0), new Vector2Int(9, 0),
+            new Vector2Int(1, 1), new Vector2Int(3, 1), new Vector2Int(4, 1), new Vector2Int(5, 1), new Vector2Int(7, 1),
+            new Vector2Int(4, 2), new Vector2Int(7, 2), new Vector2Int(8, 2), new Vector2Int(9, 2),
+            new Vector2Int(1, 3), new Vector2Int(2, 3), new Vector2Int(4, 3), new Vector2Int(6, 3), new Vector2Int(7, 3), new Vector2Int(9, 3),
+            new Vector2Int(1, 4), new Vector2Int(2, 4), new Vector2Int(4, 4), new Vector2Int(7, 4),
+            new Vector2Int(1, 5), new Vector2Int(2, 5), new Vector2Int(5, 5), new Vector2Int(7, 5),
+            new Vector2Int(2, 6), new Vector2Int(3, 6), new Vector2Int(8, 6), new Vector2Int(9, 6),
+            new Vector2Int(1, 7), new Vector2Int(2, 7), new Vector2Int(5, 7), new Vector2Int(7, 7), new Vector2Int(8, 7), new Vector2Int(9, 7),
+            new Vector2Int(0, 8), new Vector2Int(3, 8), new Vector2Int(5, 8), new Vector2Int(7, 8), new Vector2Int(8, 8), new Vector2Int(9, 8),
+            new Vector2Int(0, 9), new Vector2Int(3, 9), new Vector2Int(5, 9)
+        }
+    };
+    public static int choice;
+    public enum MazeType
+    {
+        Maze1, Maze2
+    }
+    public MazeType mazeType;
+
+
+    // Start is called before the first frame update
+    private void Awake()
+    {
+        choice = (mazeType == MazeType.Maze1) ? 0 : 1;
+    }
+
+    void Start()
+    {
+        
+        DefinePaths();
+        GenerateBounds();
+
+    }
+    void DefinePaths()
+    {
+        // Mark the grid positions of the paths as occupied
+        foreach (var point in nonwalkables[choice])
         {
-            case WallState.Left: return WallState.Right;
-            case WallState.Right: return WallState.Left;
-            case WallState.Front: return WallState.Rear;
-            case WallState.Rear: return WallState.Front;
-            default: return WallState.Left;
+            Instantiate(cubePrefab, new Vector3(point.x, 0, point.y), Quaternion.identity);
         }
     }
 
-    //Function to iterate over maze cells and remove walls
-    private static WallState[,] RecursiveBacktracker(WallState[,] maze, int width, int length, int seed)
+    void GenerateBounds()
     {
-        //1: Choose a random position for initiating
-        var ran = new System.Random(seed);
+        List<Vector2Int> path = paths[choice].ToList();
+        Renderer prefabRenderer = cubePrefab.GetComponent<Renderer>();
+        float offset = (prefabRenderer.bounds.size.x)/2;
+        Vector2Int bounds = new Vector2Int(10, 10);
 
-        //1.1: Storing the random visited positions in a stack
-        var VisitedPosStack = new Stack<Position>();
-
-        //1.2: Acquiring the random position
-        var position = new Position {X = ran.Next(0, width), Y = ran.Next(0, length)};
-
-        //2: Marking the start random position as visited
-        maze[position.X, position.Y] |= WallState.Visited;
-
-        //2.2: Storing the visited position in the stack
-        VisitedPosStack.Push(position);
-
-        //3: Iterate over the position stack till it becomes empty
-        while (VisitedPosStack.Count > 0)
+        for (int x = 0; x < bounds.x; x++)
         {
-            //Acquire the current position
-            var current = VisitedPosStack.Pop();
-
-            //Get the neighbors of the current positions
-            var neighbors = GetUnvisitedNeighbors(current, maze, width, length);
-
-            //If the current position has unvisited neighbors
-            if (neighbors.Count > 0)
+            for (int y = 0; y < bounds.y; y++)
             {
-                //Then visit them and store them in position stack
-                VisitedPosStack.Push(current);
+                // Instantiate floor at every grid position
+                GameObject tile = Instantiate(boundPrefab, new Vector3(x, -offset, y), Quaternion.identity);
 
-                //Then find random neighbor of current
+                // Glow
+                /*Debug.Log(path.Count);*/
+               /* if(path.Contains(new Vector2Int(x, y))){
+                    *//*Debug.Log($"({x},{y})");*//*
+                    tile.GetComponent<Renderer>().material = glowMaterial; 
+                }*/
 
-                //ranIndex gives a random index between 0 to number of neighbors
-                var ranIndex = ran.Next(0, neighbors.Count);
-                //Extracting the neighbor at ranIndex
-                var randomNeighbor = neighbors[ranIndex];
-                
-                //Extract the random neighbor's position
-                var neighborPos = randomNeighbor.Position;
-                //Remove wall at the current position in the maze
-                maze[current.X, current.Y] &= ~randomNeighbor.SharedWall;
-                //Remove wall at neighbor's position
-                maze[neighborPos.X, neighborPos.Y] &= ~GetOppositeWall(randomNeighbor.SharedWall);
-                //Mark the neighbor's position as visited
-                maze[neighborPos.X, neighborPos.Y] |= WallState.Visited;
-
-                //Push the visited neighbor in the position 
-                VisitedPosStack.Push(neighborPos);
-            }
-        }
-        return maze;
-    }
-
-    //Storing a list of unvisited neighbors
-    //Iterate over all positions
-    //Check if each location has the flag Visited, if not then add to the list and return the list of Unvisited Neighbors
-    private static List<Neighbor> GetUnvisitedNeighbors (Position p, WallState[,] maze, int width, int length)
-    {
-        var UnvisitedNeighbors = new List<Neighbor> ();
-        if(p.X > 0) //left
-        {
-            if (!maze[p.X - 1, p.Y].HasFlag(WallState.Visited))
-            {
-                UnvisitedNeighbors.Add(new Neighbor
+                // Check if the position is on the boundary of the grid
+                if (x == 0 || x == bounds.x - 1 || y == 0 || y == bounds.y - 1)
                 {
-                    Position = new Position
+                    // Instantiate walls at the boundary positions
+                    float rotationAngle = 90;
+                    if (x == 0 || x == bounds.x - 1)
                     {
-                        X = p.X - 1,
-                        Y = p.Y
-                    },
-                    SharedWall = WallState.Left
-                });
-            }
-        }
-
-        if (p.Y > 0) // rear
-        {
-            if (!maze[p.X, p.Y - 1].HasFlag(WallState.Visited))
-            {
-                UnvisitedNeighbors.Add(new Neighbor
-                {
-                    Position = new Position
+                        float x_offset = (x == 0) ? -offset : bounds.x - offset;
+                        Instantiate(boundPrefab, new Vector3(x_offset, 0, y), Quaternion.Euler(new Vector3(0, 0, rotationAngle)));
+                    }
+                    else if (y == 0 || y == bounds.y - 1)
                     {
-                        X = p.X,
-                        Y = p.Y - 1
-                    },
-                    SharedWall = WallState.Rear
-                });
+                        float y_offset = (y == 0) ? -offset : bounds.y - offset;
+                        Instantiate(boundPrefab, new Vector3(x, 0, y_offset), Quaternion.Euler(new Vector3(rotationAngle, 0, 0)));
+                    }
+                }
             }
         }
-
-        if (p.Y < length - 1) // front
-        {
-            if (!maze[p.X, p.Y + 1].HasFlag(WallState.Visited))
-            {
-                UnvisitedNeighbors.Add(new Neighbor
-                {
-                    Position = new Position
-                    {
-                        X = p.X,
-                        Y = p.Y + 1
-                    },
-                    SharedWall = WallState.Front
-                });
-            }
-        }
-
-        if (p.X < width - 1) // right
-        {
-            if (!maze[p.X + 1, p.Y].HasFlag(WallState.Visited))
-            {
-                UnvisitedNeighbors.Add(new Neighbor
-                {
-                    Position = new Position
-                    {
-                        X = p.X + 1,
-                        Y = p.Y
-                    },
-                    SharedWall = WallState.Right
-                });
-            }
-        }
-
-        return UnvisitedNeighbors;
-    }
-
-    // A function that generates mazes.
-    public static WallState[,] GenerateMaze(int width, int length, int seed)
-    {
-        //Initiating a new empty Wallstate 2D array called maze.
-        WallState[,] maze = new WallState[width, length];
-
-        //Declaring the initial state of the maze. All walls will be up initially, i.e., WallState = 1111.
-        WallState initial = WallState.Left | WallState.Right | WallState.Front | WallState.Rear;
-
-        //Creating cells for the maze.
-        for (int i = 0; i < width; ++i)
-        {
-            for (int j = 0; j < length; ++j)
-            {
-                maze[i, j] = initial;
-            }
-        }
-
-        // Opening up the starting wall 
-        maze[0, 0] &= ~WallState.Left; // Opening the left wall at the start
-
-        // Opening up the ending wall 
-        maze[width - 1, length - 1] &= ~WallState.Right; // Opening the right wall at the end
-
-        return RecursiveBacktracker(maze, width, length, seed);
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
