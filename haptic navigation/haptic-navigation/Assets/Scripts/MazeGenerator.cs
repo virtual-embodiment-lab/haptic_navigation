@@ -77,7 +77,7 @@ public class MazeGenerator : MonoBehaviour
 
     void Start()
     {
-        
+
         DrawGrid();
         GenerateBounds();
 
@@ -100,7 +100,7 @@ public class MazeGenerator : MonoBehaviour
 
         List<Vector2Int> path = paths[choice].ToList();
         Renderer prefabRenderer = cubePrefab.GetComponent<Renderer>();
-        float offset = (prefabRenderer.bounds.size.x)/2;
+        float offset = (prefabRenderer.bounds.size.x) / 2;
         Vector2Int bounds = new Vector2Int(10, 10);
 
         for (int x = 0; x < bounds.x; x++)
@@ -111,11 +111,11 @@ public class MazeGenerator : MonoBehaviour
                 GameObject tile = Instantiate(boundPrefab, new Vector3(x, -offset, y), Quaternion.identity);
 
                 // GLOW - UNCOMMENT TO LIGHT UP SOLUTION PATH
-               /* if (path.Contains(new Vector2Int(x, y)))
-                {
-                    tile.GetComponent<Renderer>().material = glowMaterial;
-                }*/
-               // GLOW 
+                /* if (path.Contains(new Vector2Int(x, y)))
+                 {
+                     tile.GetComponent<Renderer>().material = glowMaterial;
+                 }*/
+                // GLOW 
 
                 // Check if the position is on the boundary of the grid
                 if (x == 0 || x == bounds.x - 1 || y == 0 || y == bounds.y - 1)
@@ -138,7 +138,6 @@ public class MazeGenerator : MonoBehaviour
     }
 
 }
-
 
 
 
