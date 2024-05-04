@@ -2,20 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
+
 
 public class HapticController : MonoBehaviour
 {
-    public XRBaseController leftController, rightController;
+   /* public XRController leftController;*/
+
     public float defaultAmplitude = 0.2f;
     public float defaultDuration = 0.5f;
+    public HapticImpulsePlayer hip = new HapticImpulsePlayer();
 
-    [ContextMenu ("SendHaptics")]
+
+
+    [ContextMenu("SendHaptics")]
     public void SendHaptics()
     {
-        leftController.SendHapticImpulse(defaultAmplitude, defaultDuration);
-        rightController.SendHapticImpulse(defaultAmplitude, defaultDuration);
-        Debug.Log(leftController);
+        /*leftController.SendHapticImpulse(defaultAmplitude, defaultDuration);*/
+       /* rightController.SendHapticImpulse(defaultAmplitude, defaultDuration);*/
         Debug.Log("HapticSent!!!!");
+        hip.SendHapticImpulse(.1f, .7f, .3f);
     }
-    
+
 }

@@ -1,27 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 using System.Linq;
+using UnityEngine.XR.Interaction.Toolkit;
+
 
 public class PlayerController : MonoBehaviour
 {
+    public GameObject leftController, rightController;
+    public HapticController hapticLeft, hapticRight;
     public CharacterController characterController;
     public float speed = 1f;
     public float turnSmoothTime = 1f;
     float turnSmoothVelocity;
     public float lastHorizontalInput;
     List<Vector2Int> path;
+    
+
+
 
     void Start()
     {
         path = MazeGenerator.paths[MazeGenerator.choice].ToList();
+        /*leftController = GameObject.FindWithTag("LeftController");
+        rightController = GameObject.FindWithTag("RightController");*/
+
     }
     private void Update()
     {
         /*  How Movement Works: Players Presses WASD which collects "Horizontal" and "Vertical" axis information, so that player can rotate 
             Then Player presses space bar to actually move forward.
         */
+
+        leftController = GameObject.FindWithTag("LeftController");
+        rightController = GameObject.FindWithTag("RightController");
+        if (leftController != null && rightController != null)
+        {
+            hapticLeft = leftController.GetComponent<HapticController>();
+            hapticRight = rightController.GetComponent<HapticController>();
+        }
+
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
@@ -95,11 +116,14 @@ public class PlayerController : MonoBehaviour
         {
             if (directionVector.x > 0)
             {
-                Debug.Log("Move right");
+                //Debug.Log("Move right");
+                hapticLeft?.SendHaptics();
+                
             }
             else
             {
                 Debug.Log("Move left");
+                hapticLeft?.SendHaptics();
             }
         }
         else // if mag(x_coord) is < mag(y_coord) move vertically
@@ -107,10 +131,12 @@ public class PlayerController : MonoBehaviour
             if (directionVector.y > 0)
             {
                 Debug.Log("Move up");
+                hapticRight?.SendHaptics();
             }
             else
             {
                 Debug.Log("Move down");
+                hapticRight?.SendHaptics();
             }
         }
     }
