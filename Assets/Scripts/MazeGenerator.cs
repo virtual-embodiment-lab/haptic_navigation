@@ -111,10 +111,10 @@ public class MazeGenerator : MonoBehaviour
                 GameObject tile = Instantiate(boundPrefab, new Vector3(x, -offset, y), Quaternion.identity);
 
                 // GLOW - UNCOMMENT TO LIGHT UP SOLUTION PATH
-                if (path.Contains(new Vector2Int(x, y)))
+              /*  if (path.Contains(new Vector2Int(x, y)))
                 {
                     tile.GetComponent<Renderer>().material = glowMaterial;
-                }
+                }*/
                 // GLOW 
 
                 // Check if the position is on the boundary of the grid

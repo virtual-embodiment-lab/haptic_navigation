@@ -112,13 +112,14 @@ public class PlayerController : MonoBehaviour
          * Remember when subtracting the player `currentPos` and the `nearestPoint` The player is the base.
          */
 
+
         if (Mathf.Abs(directionVector.x) > Mathf.Abs(directionVector.y)) // if mag(x_coord) is > mag(y_coord) move horizontally
         {
             if (directionVector.x > 0)
             {
                 //Debug.Log("Move right");
-                hapticLeft?.SendHaptics();
-                
+                hapticRight?.SendHaptics();
+
             }
             else
             {
@@ -132,11 +133,13 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("Move up");
                 hapticRight?.SendHaptics();
+                hapticLeft?.SendHaptics();
             }
             else
             {
                 Debug.Log("Move down");
                 hapticRight?.SendHaptics();
+                hapticLeft?.SendHaptics();
             }
         }
     }

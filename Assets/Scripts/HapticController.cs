@@ -16,12 +16,13 @@ public class HapticController : MonoBehaviour
 
 
     [ContextMenu("SendHaptics")]
+    /*float amplitude, float duration, float frequency*/
     public void SendHaptics()
     {
         /*leftController.SendHapticImpulse(defaultAmplitude, defaultDuration);*/
        /* rightController.SendHapticImpulse(defaultAmplitude, defaultDuration);*/
         Debug.Log("HapticSent!!!!");
-        hip.SendHapticImpulse(.1f, .7f, .3f);
+        hip.SendHapticImpulse(.1f,.7f,.3f);
     }
 
 }
