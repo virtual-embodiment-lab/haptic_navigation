@@ -6,6 +6,7 @@ TagManager:
   tags:
   - RightController
   - LeftController
+  - XROrigin
   layers:
   - Default
   - TransparentFX

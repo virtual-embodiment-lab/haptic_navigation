@@ -18,9 +18,8 @@ public class PlayerController : MonoBehaviour
     float turnSmoothVelocity;
     public float lastHorizontalInput;
     List<Vector2Int> path;
-    
-
-
+    public GameObject camera;
+    public Vector3 cameraDir;
 
     void Start()
     {
@@ -34,7 +33,7 @@ public class PlayerController : MonoBehaviour
         /*  How Movement Works: Players Presses WASD which collects "Horizontal" and "Vertical" axis information, so that player can rotate 
             Then Player presses space bar to actually move forward.
         */
-
+        camera = GameObject.FindWithTag("MainCamera");
         leftController = GameObject.FindWithTag("LeftController");
         rightController = GameObject.FindWithTag("RightController");
         if (leftController != null && rightController != null)
@@ -42,6 +41,9 @@ public class PlayerController : MonoBehaviour
             hapticLeft = leftController.GetComponent<HapticController>();
             hapticRight = rightController.GetComponent<HapticController>();
         }
+        cameraDir = camera.transform.position;
+        
+
 
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
@@ -76,14 +78,25 @@ public class PlayerController : MonoBehaviour
 
     void CheckAndGuidePath()
     {
-            /* Compares the path the player is on to the actual optimal path and recommends adjustments to player direction.*/
+        /* Compares the path the player is on to the actual optimal path and recommends adjustments to player direction.*/
 
-            Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z)); // discretizes the current player position
-            if (!path.Contains(currentPos))
+        Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(/*transform.position.x */cameraDir.x), Mathf.RoundToInt(/*transform.position.z*/ cameraDir.z)); // discretizes the current player position
+       
+        /*if (!path.Contains(currentPos))
         {
             Vector2Int nearestPoint = FindNearestPathPoint(currentPos);
             Vector2Int directionVector = nearestPoint - currentPos;
+            Debug.Log(directionVector);
             ProvideDirection(directionVector);
+        }*/
+
+        if (path.Contains(currentPos))
+        {
+            hapticRight?.SendHaptics();
+            hapticLeft?.SendHaptics();
+            Vector2Int nearestPoint = FindNearestPathPoint(currentPos);
+            Vector2Int directionVector = nearestPoint - currentPos;
+            Debug.Log(directionVector);
         }
     }
 
@@ -118,29 +131,34 @@ public class PlayerController : MonoBehaviour
             if (directionVector.x > 0)
             {
                 //Debug.Log("Move right");
-                hapticRight?.SendHaptics();
+                /*hapticRight?.SendHaptics();*/
 
             }
             else
             {
-                Debug.Log("Move left");
-                hapticLeft?.SendHaptics();
+              /*  Debug.Log("Move left");
+                hapticLeft?.SendHaptics();*/
             }
         }
-        else // if mag(x_coord) is < mag(y_coord) move vertically
+        else if (Mathf.Abs(directionVector.x) <= Mathf.Abs(directionVector.y))// if mag(x_coord) is < mag(y_coord) move vertically
         {
             if (directionVector.y > 0)
             {
-                Debug.Log("Move up");
+                /*Debug.Log("Move up");
                 hapticRight?.SendHaptics();
-                hapticLeft?.SendHaptics();
+                hapticLeft?.SendHaptics();*/
             }
             else
             {
-                Debug.Log("Move down");
+                /*Debug.Log("Move down");
                 hapticRight?.SendHaptics();
-                hapticLeft?.SendHaptics();
+                hapticLeft?.SendHaptics();*/
             }
+        }
+        else if (Mathf.Abs(directionVector.x) == 0  || Mathf.Abs(directionVector.y) == 0)
+        {
+            hapticRight?.SendHaptics();
+            hapticLeft?.SendHaptics(); 
         }
     }
 }
