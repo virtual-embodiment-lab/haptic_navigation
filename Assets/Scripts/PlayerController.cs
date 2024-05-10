@@ -134,15 +134,15 @@ public class PlayerController : MonoBehaviour
             frequency = .9f;
         }
          
-        if (angleBetween > 0)
+        if (angleBetween > 0.7853981f)
         {
             hapticLeft?.SendHaptics(amplitude, duration, frequency);
         }
-        else if (angleBetween < 0)
+        else if (angleBetween < -0.7853981f)
         {
             hapticRight?.SendHaptics(amplitude, duration, frequency);
         }
-        else if (angleBetween == 0)
+        else if (angleBetween < 0.7853981f && angleBetween > -0.7853981f)
         {
             hapticLeft?.SendHaptics(amplitude, duration, frequency);
             hapticRight?.SendHaptics(amplitude, duration, frequency);
