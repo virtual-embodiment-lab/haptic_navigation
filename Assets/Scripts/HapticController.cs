@@ -21,7 +21,7 @@ public class HapticController : MonoBehaviour
     {
         /*leftController.SendHapticImpulse(defaultAmplitude, defaultDuration);*/
        /* rightController.SendHapticImpulse(defaultAmplitude, defaultDuration);*/
-        Debug.Log("HapticSent!!!!");
+        
         hip.SendHapticImpulse(.1f,.1f,.3f);
     }
 
