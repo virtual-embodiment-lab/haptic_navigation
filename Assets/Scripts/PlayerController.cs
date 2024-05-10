@@ -18,26 +18,20 @@ public class PlayerController : MonoBehaviour
     float turnSmoothVelocity;
     public float lastHorizontalInput;
     List<Vector2Int> path;
-    public GameObject camera;
-    public Vector3 cameraDir;
+ 
 
     void Start()
     {
         path = MazeGenerator.paths[MazeGenerator.choice].ToList();
-        /*leftController = GameObject.FindWithTag("LeftController");
-        rightController = GameObject.FindWithTag("RightController");*/
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-        /*transform.forward = new Vector3(1f, transform.forward.y, 1f);*/
         transform.position = new Vector3(0.2f, -0.5f, 0f);
-        /*transform.position = -transform.forward;
-        transform.position = new Vector3(transform.position.x, -.5f, transform.position.z);*/
+     
     }
     private void Update()
     {
         /*  How Movement Works: Players Presses WASD which collects "Horizontal" and "Vertical" axis information, so that player can rotate 
             Then Player presses space bar to actually move forward.
         */
-        camera = GameObject.FindWithTag("MainCamera");
         leftController = GameObject.FindWithTag("LeftController");
         rightController = GameObject.FindWithTag("RightController");
         if (leftController != null && rightController != null)
@@ -45,9 +39,8 @@ public class PlayerController : MonoBehaviour
             hapticLeft = leftController.GetComponent<HapticController>();
             hapticRight = rightController.GetComponent<HapticController>();
         }
-        /*cameraDir = camera.transform.position;*/
-        
-
+  
+       
 
        /* float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
@@ -86,56 +79,53 @@ public class PlayerController : MonoBehaviour
 
         Vector2Int currentDir = new Vector2Int(Mathf.RoundToInt(transform.forward.x), Mathf.RoundToInt(transform.forward.z)); // discretizes the current player position
         Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z)); // discretizes the current player position
-        // whenever we turn that should be the current forward 
+        /*// whenever we turn that should be the current forward 
         Debug.Log("Current position: " + currentPos);
-        Debug.Log("Current direction " + currentDir);
+        Debug.Log("Current direction " + currentDir);*/
 
-        /*if (!path.Contains(currentPos))
+        // if they go off track ( beep, beep, beep)
+        if (!path.Contains(currentPos))
         {
-            Vector2Int nearestPoint = FindNearestPathPoint(currentPos);
-            Vector2Int directionVector = nearestPoint - currentPos;
-            Debug.Log(directionVector);
-            ProvideDirection(directionVector);
-        }*/
+            Vector2Int nearestPos = FindNearestPathPoint(currentPos);
+            Vector2Int differenceVector = nearestPos - currentPos;
+            // convert from Vector2Int to Vector 2
+            Vector2 a = new Vector2(currentDir.x, currentDir.y);
+            Vector2 b = new Vector2(differenceVector.x, differenceVector.y);
+            b.Normalize();
 
+            // find angle in Betweeen two vectors
+            float angleBetween = findAngle(a, b);
+            ProvideDirection(angleBetween,false);
+        }
+
+        // if player is on track
         if (path.Contains(currentPos))
         {
             int currentPosIndex = path.IndexOf(currentPos);
-            Vector2Int nextPos = path[currentPosIndex+1];
-            Vector2Int differenceVector = nextPos - currentPos;
-            Debug.Log("NextPos: " + nextPos);
-            Debug.Log("differenceVector " + differenceVector);
+            Vector2Int nearestPos = path[currentPosIndex + 1];
+            Vector2Int differenceVector = nearestPos - currentPos;
 
+            // convert from Vector2Int to Vector 2
             Vector2 a = new Vector2(currentDir.x, currentDir.y);
             Vector2 b = new Vector2(differenceVector.x, differenceVector.y);
-            float currentAngle = Mathf.Atan2(a.y, a.x);
-            float targetAngle = Mathf.Atan2(b.y, b.x);
-            float angledif = targetAngle - currentAngle;
-            angledif = Mathf.Atan2(Mathf.Sin(angledif), Mathf.Cos(angledif));
-            Debug.Log("ANGLE:" + angledif);
 
-            if(angledif > 0)
-            {
-                hapticLeft?.SendHaptics(); 
-            }
-            else if(angledif < 0)
-            {
-                hapticRight?.SendHaptics();
-            }
-            else if(angledif == 0)
-            {
-                hapticLeft?.SendHaptics();
-                hapticRight?.SendHaptics();
-            }
-
-            
-            
+            // find angle in Betweeen two vectors
+            float angleBetween = findAngle(a, b);
+            ProvideDirection(angleBetween,true);
         }
     }
 
-    /*Vector2Int FindNearestPathPoint(Vector2Int currentPos)
+    float findAngle(Vector2 currentVector, Vector2 targetVector) {
+        float currentAngle = Mathf.Atan2(currentVector.y, currentVector.x);
+        float targetAngle = Mathf.Atan2(targetVector.y, targetVector.x);
+        float angledif = targetAngle - currentAngle;
+        angledif = Mathf.Atan2(Mathf.Sin(angledif), Mathf.Cos(angledif));
+        return angledif;
+    }
+
+    Vector2Int FindNearestPathPoint(Vector2Int currentPos)
     {
-        *//* Checks the set of points in `path` and finds the closest one to `currentPos`.*//*
+       /* Checks the set of points in `path` and finds the closest one to `currentPos`.*/
 
         Vector2Int nearestPoint = new Vector2Int();
         float minDistance = float.MaxValue;
@@ -150,50 +140,42 @@ public class PlayerController : MonoBehaviour
             }
         }
         return nearestPoint;
-    }*/
+    }
 
-  /*  void ProvideDirection(Vector2Int directionVector)
+    void ProvideDirection(float angleBetween, bool onTrack)
     {
-        *//*Depending on the `directionVector` of the player, this function gives Haptic Feedback to player
-         * Remember when subtracting the player `currentPos` and the `nearestPoint` The player is the base.
-         *//*
+        float amplitude;
+        float duration;
+        float frequency;
 
+        // Sends different vibration specs depending on whether the player is on the right path or not
+        if(onTrack){
+            amplitude = .5f;
+            duration = .5f;
+            frequency = .5f;
+        }
+        else
+        {
+            amplitude = .2f;
+            duration = .2f;
+            frequency = .2f;
+        }
+         
+        if (angleBetween > 0)
+        {
+            hapticLeft?.SendHaptics(amplitude, duration, frequency);
+        }
+        else if (angleBetween < 0)
+        {
+            hapticRight?.SendHaptics(amplitude, duration, frequency);
+        }
+        else if (angleBetween == 0)
+        {
+            hapticLeft?.SendHaptics(amplitude, duration, frequency);
+            hapticRight?.SendHaptics(amplitude, duration, frequency);
+        }
 
-        if (Mathf.Abs(directionVector.x) > Mathf.Abs(directionVector.y)) // if mag(x_coord) is > mag(y_coord) move horizontally
-        {
-            if (directionVector.x > 0)
-            {
-                //Debug.Log("Move right");
-                *//*hapticRight?.SendHaptics();*//*
-
-            }
-            else
-            {
-              *//*  Debug.Log("Move left");
-                hapticLeft?.SendHaptics();*//*
-            }
-        }
-        else if (Mathf.Abs(directionVector.x) <= Mathf.Abs(directionVector.y))// if mag(x_coord) is < mag(y_coord) move vertically
-        {
-            if (directionVector.y > 0)
-            {
-                *//*Debug.Log("Move up");
-                hapticRight?.SendHaptics();
-                hapticLeft?.SendHaptics();*//*
-            }
-            else
-            {
-                *//*Debug.Log("Move down");
-                hapticRight?.SendHaptics();
-                hapticLeft?.SendHaptics();*//*
-            }
-        }
-        else if (Mathf.Abs(directionVector.x) == 0  || Mathf.Abs(directionVector.y) == 0)
-        {
-            hapticRight?.SendHaptics();
-            hapticLeft?.SendHaptics(); 
-        }
-    }*/
+    }
 }
 
 
