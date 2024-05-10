@@ -69,7 +69,7 @@ public class MazeGenerator : MonoBehaviour
     public MazeType mazeType;
 
 
-    // I called this Awake function so the PlayerScript can collect the solution path it needs before startup.
+    // I called this Awake function so the PlayerControllerScript can collect the solution path it needs before startup.
     private void Awake()
     {
         choice = (mazeType == MazeType.Maze0) ? 0 : 1;

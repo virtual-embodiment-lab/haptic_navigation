@@ -217,7 +217,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1680501587, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_HDR
@@ -269,7 +269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -394,6 +394,10 @@ PrefabInstance:
     - target: {fileID: 5663893676086941514, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_NearFarEnableTeleportDuringNearInteraction
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5826056641483426609, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_RightController
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5944131804917401860, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_IsActive
@@ -1377,6 +1381,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultAmplitude: 0.2
   defaultDuration: 0.5
+  defaultFrequency: 0.4
   hip: {fileID: 33005011}
 --- !u!1 &1117707529
 GameObject:
@@ -1409,6 +1414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultAmplitude: 0.2
   defaultDuration: 0.5
+  defaultFrequency: 0.4
   hip: {fileID: 0}
 --- !u!4 &1117707531
 Transform:
@@ -1722,12 +1728,6 @@ MonoBehaviour:
   rightController: {fileID: 1075916573}
   hapticLeft: {fileID: 0}
   hapticRight: {fileID: 0}
-  characterController: {fileID: 0}
-  speed: 1
-  turnSmoothTime: 1
-  lastHorizontalInput: 0
-  camera: {fileID: 0}
-  cameraDir: {x: 0, y: 0, z: 0}
 --- !u!114 &1674047972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1794,6 +1794,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultAmplitude: 0.2
   defaultDuration: 0.5
+  defaultFrequency: 0.4
   hip: {fileID: 33005013}
 --- !u!1 &1824236512
 GameObject:
@@ -2031,7 +2032,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 155296421649713756, guid: 9a8e6066171b5b648ba26b51e6829466, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 28.53
       objectReference: {fileID: 0}
     - target: {fileID: 155296421649713756, guid: 9a8e6066171b5b648ba26b51e6829466, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2039,7 +2040,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 155296421649713756, guid: 9a8e6066171b5b648ba26b51e6829466, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.737
+      value: -27.42
       objectReference: {fileID: 0}
     - target: {fileID: 155296421649713756, guid: 9a8e6066171b5b648ba26b51e6829466, type: 3}
       propertyPath: m_LocalRotation.w
