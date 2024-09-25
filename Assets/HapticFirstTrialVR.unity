@@ -135,7 +135,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &15906333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 15906332}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1fbb15bf92b84f40a1eb030765b5afe, type: 3}
   m_Name: 
@@ -167,7 +167,7 @@ MonoBehaviour:
     invertFade: 0
     distanceFadeStart: 10000
     distanceFadeEnd: 10000
-    textureOffset: {x: -0, y: -0, z: -0}
+    textureOffset: {x: 0, y: 0, z: 0}
     falloffMode: 0
     maskMode: 1
     materialMask: {fileID: 2100000, guid: ea08c89eb603b6f4b9fc07633d54a76b, type: 2}
@@ -181,7 +181,7 @@ Transform:
   m_GameObject: {fileID: 15906332}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -248,20 +248,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 888299409}
     - target: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_CameraYOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_RequestedTrackingOriginMode
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503725, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_Name
       value: XR Origin (XR Rig)
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.6876149
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -269,7 +269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.60717434
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1169,8 +1169,8 @@ Transform:
   m_GameObject: {fileID: 705507993}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.14993186, y: 2.9947069, z: -0.073765814}
+  m_LocalScale: {x: -0.88267, y: -0.88267, z: -0.88267}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1379,9 +1379,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a4b2a32d55cb77449cde998d9a3de3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultAmplitude: 0.2
-  defaultDuration: 0.5
-  defaultFrequency: 0.4
   hip: {fileID: 33005011}
 --- !u!1 &1117707529
 GameObject:
@@ -1412,9 +1409,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a4b2a32d55cb77449cde998d9a3de3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultAmplitude: 0.2
-  defaultDuration: 0.5
-  defaultFrequency: 0.4
   hip: {fileID: 0}
 --- !u!4 &1117707531
 Transform:
@@ -1584,7 +1578,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1575462071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1728,6 +1722,10 @@ MonoBehaviour:
   rightController: {fileID: 1075916573}
   hapticLeft: {fileID: 0}
   hapticRight: {fileID: 0}
+  camera: {fileID: 0}
+  cameraDir: {x: 0, y: 0, z: 0}
+  frequency: 0.8
+  duration: 0.1
 --- !u!114 &1674047972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1792,9 +1790,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a4b2a32d55cb77449cde998d9a3de3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultAmplitude: 0.2
-  defaultDuration: 0.5
-  defaultFrequency: 0.4
   hip: {fileID: 33005013}
 --- !u!1 &1824236512
 GameObject:
@@ -2017,6 +2012,54 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1917197831
+GameObject:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1917197833}
+  - component: {fileID: 1917197832}
+  m_Layer: 0
+  m_Name: StaticLightingSky
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1917197832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917197831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441482e8936e35048a1dffac814e3ef8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Profile: {fileID: 0}
+  m_StaticLightingSkyUniqueID: 0
+  m_StaticLightingCloudsUniqueID: 0
+  m_StaticLightingVolumetricClouds: 0
+--- !u!4 &1917197833
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917197831}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1942749468 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7957840125152048439, guid: 783e8ff459858154690ab105e1e34773, type: 3}
@@ -2322,6 +2365,7 @@ SceneRoots:
   - {fileID: 8187252675302298169}
   - {fileID: 609653717}
   - {fileID: 888299410}
-  - {fileID: 33005009}
   - {fileID: 1575462072}
   - {fileID: 15906334}
+  - {fileID: 33005009}
+  - {fileID: 1917197833}

@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour
     List<Vector2Int> path;
     public GameObject camera;
     public Vector3 cameraDir;
+    public float frequency;
+    public float duration;
+    bool isPulsing;
 
 
     void Start()
@@ -24,6 +27,9 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         transform.position = new Vector3(0.2f, -0.5f, 0f);
         transform.forward = new Vector3(1f, transform.forward.y, 1f);
+        isPulsing = true;
+
+
 
     }
     private void Update()
@@ -121,40 +127,58 @@ public class PlayerController : MonoBehaviour
         /*Sends different vibration specs depending on whether the player is on the right path or not*/
 
         float amplitude;
-        float duration;
-        float frequency;
 
-       
-        if(onTrack){
-            amplitude = .2f;
-            duration = .2f;
-            frequency = .4f;
-        }
-        else
-        {
-            amplitude = .5f;
-            duration = .5f;
-            frequency = .9f;
-        }
-        /*0.7853981f*/
-         
-        if (angleBetween > 0)
+        amplitude = .3f;
+        duration = .1f;
+        frequency = .1f;
+
+    if (angleBetween > 0)
         {
             // we hard coded this value because the left controller was feeling a bit weaker, so we gave it a higher amplitude
-            hapticLeft?.SendHaptics(.4f, duration, frequency);
+            hapticLeft?.SendHaptics(.5f * amplitude, duration, frequency);
+
         }
         else if (angleBetween < 0)
         {
             hapticRight?.SendHaptics(amplitude, duration, frequency);
         }
-        else if (angleBetween== 0) /*angleBetween >= -0.7853981f && angleBetween <= 0.7853981f*/
-        {
+        else if (angleBetween == 0) //angleBetween >= -0.7853981f && angleBetween <= 0.7853981f
+    {
             // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
-           /* hapticLeft?.SendHaptics(.4f, duration, frequency);
-            hapticRight?.SendHaptics(amplitude, duration, frequency);*/
+            hapticLeft?.SendHaptics(amplitude, duration, frequency);
+            hapticRight?.SendHaptics(amplitude*2f, duration, frequency);
         }
 
     }
+
+    /*void ProvideDirection(float angleBetween, bool onTrack)
+    {
+        *//*Sends different vibration specs depending on whether the player is on the right path or not*//*
+
+        float amplitude;
+        amplitude = .3f;
+   
+
+        if (angleBetween > 0 && isPulsing == true)
+        {
+                hapticLeft?.SendHaptics(amplitude*2f, 1f, 1f);
+                isPulsing = false; 
+        }
+         else if (angleBetween < 0 && isPulsing == true)
+         {
+
+            hapticRight?.SendHaptics(amplitude * 2f, 1f, 1f);
+            isPulsing = false;
+        }
+         else if (angleBetween == 0 && isPulsing == false) *//*angleBetween >= -0.7853981f && angleBetween <= 0.7853981f*//*
+                {
+            // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
+            hapticLeft?.SendHaptics(amplitude * 2f, 1f, 1f);
+            hapticRight?.SendHaptics(amplitude * 2f, 1f, 1f);
+            isPulsing = true;
+        }
+
+    }*/
 }
 
 
