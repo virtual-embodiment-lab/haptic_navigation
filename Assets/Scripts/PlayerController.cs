@@ -14,16 +14,19 @@ public class PlayerController : MonoBehaviour
     public GameObject leftController, rightController;
     public HapticController hapticLeft, hapticRight;
     List<Vector2Int> path;
+    List<Vector2Int> nonwalkables;
     public GameObject camera;
     public Vector3 cameraDir;
     public float frequency;
     public float duration;
     bool isPulsing;
+    public MazeGenerator mazeGenerator;
 
 
     void Start()
     {
-        path = MazeGenerator.paths[MazeGenerator.choice].ToList();
+        path = MazeGenerator.paths[0].ToList();
+        nonwalkables = MazeGenerator.nonwalkables[0].ToList();
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         transform.position = new Vector3(0.2f, -0.5f, 0f);
         transform.forward = new Vector3(1f, transform.forward.y, 1f);
@@ -56,12 +59,23 @@ public class PlayerController : MonoBehaviour
         //Vector2Int currentDir = new Vector2Int(Mathf.RoundToInt(cameraDir.x), Mathf.RoundToInt(cameraDir.z));
         Vector2Int currentDir = new Vector2Int(Mathf.RoundToInt(transform.forward.x), Mathf.RoundToInt(transform.forward.z)); // discretizes the current player position
         Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z)); // discretizes the current player position
+     
 
         // if they go off track
         if (!path.Contains(currentPos))
         {
-            Vector2Int nearestPos = FindNearestPathPoint(currentPos);
+           
+
+            Vector2Int nearestPos = FindValidPathPoint(currentPos);
+            Debug.Log(nearestPos);
             Vector2Int differenceVector = nearestPos - currentPos;
+            Collider[] colliders = Physics.OverlapSphere(new Vector2(nearestPos.x, nearestPos.y), 0.1f);
+            foreach(Collider collider in colliders)
+            {
+                GameObject obj = collider.gameObject;
+                
+            }
+            
 
             // convert from Vector2Int to Vector 2
             Vector2 a = new Vector2(currentDir.x, currentDir.y);
@@ -99,7 +113,7 @@ public class PlayerController : MonoBehaviour
         float targetAngle = Mathf.Atan2(targetVector.y, targetVector.x);
         float angledif = targetAngle - currentAngle;
         angledif = Mathf.Atan2(Mathf.Sin(angledif), Mathf.Cos(angledif));
-        Debug.Log("ANGLE:" + angledif);
+        
         return angledif;
     }
 
@@ -119,7 +133,88 @@ public class PlayerController : MonoBehaviour
                 nearestPoint = point;
             }
         }
+       /* bool blocked = IsPathBlocked(currentPos, nearestPoint);*/
+      
         return nearestPoint;
+    }
+
+
+    Vector2Int FindValidPathPoint(Vector2Int currentPos)
+    {
+        List<Vector2Int> sortedPathPoints = path.OrderBy(point => Vector2.Distance(currentPos, point)).ToList();
+        float minDistance = float.MaxValue;
+        float tempdist;
+        Vector2Int nearestPoint = new Vector2Int();
+        
+
+        foreach (Vector2Int pathPoint in path)
+        {
+            tempdist = IsPathBlocked(currentPos, pathPoint);
+          
+            if (tempdist != -1)
+            {
+                if (tempdist < minDistance)
+                {
+                    minDistance = tempdist;
+                    nearestPoint = pathPoint;
+                } 
+            }
+        }
+      
+        return nearestPoint;
+        Debug.Log("FAILURE");
+        return new Vector2Int(-1, -1);
+        
+    }
+
+    int IsPathBlocked(Vector2Int startPos, Vector2Int endPos)
+    {
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+
+        queue.Enqueue(startPos);
+        int distance = 0;
+        visited.Add(startPos);
+
+        while(queue.Count > 0)
+        {
+            int levelSize = queue.Count;
+
+            for (int i = 0; i <levelSize; i++)
+            {
+                Vector2Int currentPos = queue.Dequeue();
+                if (currentPos == endPos)
+                { return distance; }
+
+                foreach (Vector2Int neighbor in GetNeighbors(currentPos))
+                {
+                    if (!IsInBounds(neighbor, 10, 10) || visited.Contains(neighbor)) { continue; }
+                    if (nonwalkables.Contains(neighbor)) { continue; }
+                    queue.Enqueue(neighbor);
+                    visited.Add(neighbor);
+                }
+            }
+          
+            distance++;
+        }
+        return -1;
+    }
+
+
+    bool IsInBounds(Vector2Int pos , int mazeWidth, int mazeHeight)
+    {
+        return pos.x >=0 && pos.x < mazeWidth && pos.y >=0 && pos.y < mazeHeight;
+    }
+
+    List<Vector2Int> GetNeighbors(Vector2Int currentPos)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+
+        neighbors.Add(new Vector2Int(currentPos.x + 1, currentPos.y));
+        neighbors.Add(new Vector2Int(currentPos.x - 1, currentPos.y));
+        neighbors.Add(new Vector2Int(currentPos.x , currentPos.y + 1));
+        neighbors.Add(new Vector2Int(currentPos.x , currentPos.y + 1));
+        return neighbors;
     }
 
     void ProvideDirection(float angleBetween, bool onTrack)
@@ -183,3 +278,39 @@ public class PlayerController : MonoBehaviour
 
 
 
+/*List<Vector2Int> openList = new List<Vector2Int>();
+       HashSet<Vector2Int> closedList = new HashSet<Vector2Int>();
+
+       openList.Add(startPos);
+
+       while (openList.Count > 0)
+       {
+           Vector2Int currentPos = openList[0];
+           openList.RemoveAt(0);
+
+           if(currentPos == endPos)
+           {
+               return false;
+           }
+           closedList.Add(currentPos);
+           List<Vector2Int> neighbors = GetNeighbors(currentPos);
+
+           foreach (Vector2Int neighbor in neighbors)
+           {
+               if(nonwalkables.Contains(neighbor) || closedList.Contains(neighbor))
+               {
+                   continue;
+               }
+
+               if (!openList.Contains(neighbor))
+               {
+                   openList.Add(neighbor);
+               }
+           }
+           if (openList.Count == 0)
+           {
+               break;
+           }
+       }
+
+       return true;*/

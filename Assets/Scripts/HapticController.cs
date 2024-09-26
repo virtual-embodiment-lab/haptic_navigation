@@ -9,17 +9,18 @@ public class HapticController : MonoBehaviour
 {
    /* public XRController leftController;*/
 
-    public float defaultAmplitude = 0.2f;
+  /*  public float defaultAmplitude = 0.2f;
     public float defaultDuration = 0.5f;
-    public float defaultFrequency = 0.4f;
+    public float defaultFrequency = 0.4f;*/
     public HapticImpulsePlayer hip = new HapticImpulsePlayer();
 
 
 
     [ContextMenu("SendHaptics")]
     /*float amplitude, float duration, float frequency*/
-    public void SendHaptics(float amplitude = .2f, float duration= .5f, float frequency=.4f)
+    public void SendHaptics(float amplitude, float duration, float frequency)
     {
+        
         hip.SendHapticImpulse(amplitude,duration,frequency);
     }
 

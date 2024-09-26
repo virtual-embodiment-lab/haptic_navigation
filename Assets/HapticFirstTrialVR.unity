@@ -249,7 +249,7 @@ PrefabInstance:
       objectReference: {fileID: 888299409}
     - target: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_CameraYOffset
-      value: 0
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_RequestedTrackingOriginMode
@@ -1726,6 +1726,7 @@ MonoBehaviour:
   cameraDir: {x: 0, y: 0, z: 0}
   frequency: 0.8
   duration: 0.1
+  mazeGenerator: {fileID: 0}
 --- !u!114 &1674047972
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,12 +7,12 @@ using UnityEngine.AI;
 public class NavigationController : MonoBehaviour
 {
     public Transform Destination;
-    //private NavMeshPath navPath;
+    private NavMeshPath navPath;
 
     // Start is called before the first frame update
     void Start()
     {
-        //navPath = new NavMeshPath();
+        navPath = new NavMeshPath();
     }
 
     // Update is called once per frame
@@ -20,10 +20,10 @@ public class NavigationController : MonoBehaviour
     {
         transform.GetComponent<NavMeshAgent>().destination = Destination.position;
 
-        //NavMesh.CalculatePath(transform.position, transform.GetComponent<NavMeshAgent>().destination, NavMesh.AllAreas, navPath);
+        /*NavMesh.CalculatePath(transform.position, transform.GetComponent<NavMeshAgent>().destination, NavMesh.AllAreas, navPath);*/
 
-        //for (int i = 0; i < navPath.corners.Length - 1; i++)
-        //    Debug.DrawLine(navPath.corners[i], navPath.corners[i + 1], Color.white);
+        for (int i = 0; i < navPath.corners.Length - 1; i++)
+            Debug.DrawLine(navPath.corners[i], navPath.corners[i + 1], Color.yellow);
     }
 
 

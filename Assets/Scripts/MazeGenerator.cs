@@ -38,15 +38,18 @@ public class MazeGenerator : MonoBehaviour
     public static Vector2Int[][] nonwalkables = new Vector2Int[][]
     {
         new Vector2Int[] {
-            new Vector2Int(5, 0), new Vector2Int(9, 0), new Vector2Int(1, 1), new Vector2Int(3, 1),
-            new Vector2Int(4, 1), new Vector2Int(5, 1), new Vector2Int(7, 1), new Vector2Int(4, 2),
-            new Vector2Int(7, 2), new Vector2Int(9, 2), new Vector2Int(1, 3), new Vector2Int(2, 3),
-            new Vector2Int(6, 3), new Vector2Int(7, 3), new Vector2Int(9, 3), new Vector2Int(1, 4),
-            new Vector2Int(2, 4), new Vector2Int(4, 4), new Vector2Int(5, 4), new Vector2Int(1, 5),
-            new Vector2Int(5, 5), new Vector2Int(7, 5), new Vector2Int(3, 6), new Vector2Int(9, 6),
+            new Vector2Int(5, 0), new Vector2Int(9, 0), new Vector2Int(1, 1),/* new Vector2Int(3, 1),*/
+            new Vector2Int(4, 1), new Vector2Int(5, 1), new Vector2Int(7, 1), /*new Vector2Int(4, 2),*/
+            new Vector2Int(7, 2), new Vector2Int(9, 2), new Vector2Int(1, 3),/* new Vector2Int(2, 3),*/
+            new Vector2Int(6, 3), new Vector2Int(7, 3), new Vector2Int(9, 3), /*new Vector2Int(1, 4),*/
+            new Vector2Int(2, 4), new Vector2Int(4, 4), new Vector2Int(5, 4), /*new Vector2Int(1, 5),*/
+            new Vector2Int(5, 5), new Vector2Int(7, 5), new Vector2Int(9, 6),
             new Vector2Int(1, 7), new Vector2Int(5, 7), new Vector2Int(7, 7), new Vector2Int(0, 8),
             new Vector2Int(3, 8), new Vector2Int(5, 8), new Vector2Int(7, 8), new Vector2Int(8, 8),
-            new Vector2Int(0, 9), new Vector2Int(3, 9), new Vector2Int(5, 9)
+            new Vector2Int(0, 9), new Vector2Int(3, 9), new Vector2Int(5, 9),
+            new Vector2Int(1,7), new Vector2Int(2, 7), new Vector2Int(3, 7), new Vector2Int(4, 7), new Vector2Int(5, 7)
+
+
         },
         new Vector2Int[] {
             new Vector2Int(5, 0), new Vector2Int(9, 0),
@@ -55,11 +58,12 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(1, 3), new Vector2Int(2, 3), new Vector2Int(4, 3), new Vector2Int(6, 3), new Vector2Int(7, 3), new Vector2Int(9, 3),
             new Vector2Int(1, 4), new Vector2Int(2, 4), new Vector2Int(4, 4), new Vector2Int(7, 4),
             new Vector2Int(1, 5), new Vector2Int(2, 5), new Vector2Int(5, 5), new Vector2Int(7, 5),
-            new Vector2Int(2, 6), new Vector2Int(3, 6), new Vector2Int(8, 6), new Vector2Int(9, 6),
+            new Vector2Int(2, 6), new Vector2Int(8, 6), new Vector2Int(9, 6),
             new Vector2Int(1, 7), new Vector2Int(2, 7), new Vector2Int(5, 7), new Vector2Int(7, 7), new Vector2Int(8, 7), new Vector2Int(9, 7),
             new Vector2Int(0, 8), new Vector2Int(3, 8), new Vector2Int(5, 8), new Vector2Int(7, 8), new Vector2Int(8, 8), new Vector2Int(9, 8),
             new Vector2Int(0, 9), new Vector2Int(3, 9), new Vector2Int(5, 9)
         }
+
     }; // List of Wall Blocks
     public static int choice;
     public enum MazeType
@@ -72,7 +76,8 @@ public class MazeGenerator : MonoBehaviour
     // I called this Awake function so the PlayerControllerScript can collect the solution path it needs before startup.
     private void Awake()
     {
-        choice = (mazeType == MazeType.Maze0) ? 0 : 1;
+        /*choice = (mazeType == MazeType.Maze0) ? 0 : 1;*/
+        choice = 0;
     }
 
     void Start()
@@ -88,7 +93,8 @@ public class MazeGenerator : MonoBehaviour
 
         foreach (var point in nonwalkables[choice])
         {
-            Instantiate(cubePrefab, new Vector3(point.x, 0, point.y), Quaternion.identity);
+            GameObject wallCube = Instantiate(cubePrefab, new Vector3(point.x, 0, point.y), Quaternion.identity);
+            wallCube.tag = "Wall";
         }
     }
 
@@ -136,6 +142,8 @@ public class MazeGenerator : MonoBehaviour
             }
         }
     }
+
+    
 
 }
 
