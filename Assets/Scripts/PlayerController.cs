@@ -243,14 +243,14 @@ public class PlayerController : MonoBehaviour
 
         float amplitude;
 
-        amplitude = .3f;
+        amplitude = 1f;
         duration = .1f;
         frequency = .1f;
 
     if (angleBetween > 0)
         {
             // we hard coded this value because the left controller was feeling a bit weaker, so we gave it a higher amplitude
-            hapticLeft?.SendHaptics(.5f * amplitude, duration, frequency);
+            hapticLeft?.SendHaptics(amplitude, duration, frequency);
             Debug.Log("LEFT");
 
         }
@@ -263,7 +263,7 @@ public class PlayerController : MonoBehaviour
     {
             // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
             hapticLeft?.SendHaptics(amplitude, duration, frequency);
-            hapticRight?.SendHaptics(amplitude*2f, duration, frequency);
+            hapticRight?.SendHaptics(amplitude, duration, frequency);
             Debug.Log("STRAIGHT");
         }
 
