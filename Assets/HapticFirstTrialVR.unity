@@ -273,31 +273,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 0.006141797
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0.00003543422
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0.9999811
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.0004302511
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -0.049
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 179.296
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 0.004
       objectReference: {fileID: 0}
     - target: {fileID: 1748222016861356527, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_Enabled
@@ -640,9 +640,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886fd0c3487833b4784783441458f22b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowMaterial: {fileID: 5629084884208175553, guid: 426a2785f8a940049aac2c246661cf09, type: 3}
+  tiledefMaterial: {fileID: 2100000, guid: f5809fe1b2b5a0e43b42bbba7dd233db, type: 2}
+  pathTileMaterial: {fileID: 2100000, guid: 16787696499133042b501ccfcb2f6996, type: 2}
   cubePrefab: {fileID: 1653394170131430231}
   boundPrefab: {fileID: 1942749468}
+  choice: 0
   mazeType: 1
 --- !u!4 &292345036
 Transform:
@@ -1722,11 +1724,16 @@ MonoBehaviour:
   rightController: {fileID: 1075916573}
   hapticLeft: {fileID: 0}
   hapticRight: {fileID: 0}
-  camera: {fileID: 0}
-  cameraDir: {x: 0, y: 0, z: 0}
+  amplitude: 0
   frequency: 0.8
   duration: 0.1
+  camera: {fileID: 0}
+  cameraDir: {x: 0, y: 0, z: 0}
   mazeGenerator: {fileID: 0}
+  isHighlight: 1
+  glowMaterial: {fileID: 2100000, guid: 152d5195502da5a4bb7934131100890b, type: 2}
+  tiledefMaterial: {fileID: 2100000, guid: f5809fe1b2b5a0e43b42bbba7dd233db, type: 2}
+  pathTileMaterial: {fileID: 2100000, guid: 16787696499133042b501ccfcb2f6996, type: 2}
 --- !u!114 &1674047972
 MonoBehaviour:
   m_ObjectHideFlags: 0

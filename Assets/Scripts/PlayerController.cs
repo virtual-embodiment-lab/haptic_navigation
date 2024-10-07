@@ -11,104 +11,159 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class PlayerController : MonoBehaviour
 {
 
+    /* VR Controller Variables */
     public GameObject leftController, rightController;
     public HapticController hapticLeft, hapticRight;
-    List<Vector2Int> path;
-    List<Vector2Int> nonwalkables;
-    public GameObject camera;
-    public Vector3 cameraDir;
+    public float amplitude;
     public float frequency;
     public float duration;
     bool isPulsing;
-    public MazeGenerator mazeGenerator;
+
+    /* Player Direction/Position Variables*/
+    public GameObject camera;
+    public Vector3 cameraDir;
+
+    /* MAZE Generation Variables */
+    int choice;
+    List<Vector2Int> path;
+    List<Vector2Int> nonwalkables;
+    public MazeGenerator mazeGenerator; // pulls from the MazeGenerator Script
+
+    /* MAZE Highlight Variables */
+    public bool isHighlight; 
     public Material glowMaterial;
     public Material tiledefMaterial;
+    public Material pathTileMaterial;
     List<GameObject> previousGlowingTiles = new List<GameObject>();
 
 
     void Start()
     {
-        path = MazeGenerator.paths[0].ToList();
-        nonwalkables = MazeGenerator.nonwalkables[0].ToList();
+        /* Gets the path and the walls (nonwalkables) from the MazeGenerator Script*/
+        
+        path = MazeGenerator.paths[3].ToList(); 
+        nonwalkables = MazeGenerator.nonwalkables[3].ToList();
+
+        /* Sets the Position and Direction of the VR headset */
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         transform.position = new Vector3(0.2f, -0.5f, 0f);
-        transform.forward = new Vector3(1f, transform.forward.y, 1f);
+        transform.forward = new Vector3(1f, transform.forward.y, 0f);
+
+        /* For GPS System */
         isPulsing = true;
-
-
-
     }
+
+
+    /*  How Movement Works: Players Presses WASD which collects "Horizontal" and "Vertical" axis information, so that player can rotate 
+        Then Player presses space bar to actually move forward.
+    */
     private void Update()
     {
-        /*  How Movement Works: Players Presses WASD which collects "Horizontal" and "Vertical" axis information, so that player can rotate 
-            Then Player presses space bar to actually move forward.
-        */
+        Debug.Log(choice);
+        /* Gets the VR headset position  */
         camera = GameObject.FindWithTag("MainCamera");
+        cameraDir = camera.transform.position;
+
+        /* Gets the Controller Attributes (ideally should be in Start() but doesn't work in there so I put it in Update() */
         leftController = GameObject.FindWithTag("LeftController");
         rightController = GameObject.FindWithTag("RightController");
+
         if (leftController != null && rightController != null)
         {
             hapticLeft = leftController.GetComponent<HapticController>();
             hapticRight = rightController.GetComponent<HapticController>();
         }
-        cameraDir = camera.transform.position;
-        CheckAndGuidePath();
+        
+        FollowPath();
+        HighlightPath();
     }
 
-
-    void CheckAndGuidePath()
+    /* 
+     * Compares the path the player is on to the actual optimal path and recommends adjustments to player direction.
+     * The player can either be on the:
+     *         - `solutionPath`: which means if they follow the right directions they will solve the Maze
+     *         OR 
+     *         - OffPath: which means they are somehow lost and need help to get back on the `solutionPath` so they can solve the maze.
+     * This function will determine what path the player is on and then will determine how to help them to get back on the solution path
+     * so they can complete the maze.
+     */
+    void FollowPath()
     {
-        /* Compares the path the player is on to the actual optimal path and recommends adjustments to player direction.*/
-        //Vector2Int currentDir = new Vector2Int(Mathf.RoundToInt(cameraDir.x), Mathf.RoundToInt(cameraDir.z));
+      
+        /* Get the player direction and positions */
         Vector2Int currentDir = new Vector2Int(Mathf.RoundToInt(transform.forward.x), Mathf.RoundToInt(transform.forward.z)); // discretizes the current player position
         Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z)); // discretizes the current player position
-     
+        
+        List<Vector2Int> pathToFollow = new List<Vector2Int>();
 
-        // if they go off track
-        if (!path.Contains(currentPos))
+        // I set tjh pathToFollow usiong ternary conditional operator
+        pathToFollow = (!path.Contains(currentPos) ? IsPathBlocked(currentPos) : path);
+        int currentPosIndex = pathToFollow.IndexOf(currentPos);
+        Vector2Int nearestPos = pathToFollow[currentPosIndex + 1];
+        Vector2Int differenceVector = nearestPos - currentPos;
+
+        // convert from Vector2Int to Vector 2
+        Vector2 a = new Vector2(currentDir.x, currentDir.y);
+        Vector2 b = new Vector2(differenceVector.x, differenceVector.y);
+        b.Normalize();
+
+        // find angle in Betweeen two vectors
+        float angleBetween = findAngle(a, b);
+        ProvideDirection(angleBetween, false);
+    }
+
+    /* 
+    This is just for visual purposes so the tester can see the player and track their movements from the solution path.
+    It does the same thing as FollowPath except it doesn't guide the user it just makes certain tiles glow. 
+    **ONLY FOR TESTER**
+    */
+    void HighlightPath()
+    {
+        if (isHighlight)
         {
-           
-            Vector2Int nearestPos = FindValidPathPoint(currentPos);
-            Vector2Int differenceVector = nearestPos - currentPos;
-            Collider[] colliders = Physics.OverlapSphere(new Vector2(nearestPos.x, nearestPos.y), 0.1f);
-            foreach(Collider collider in colliders)
+            /* Compares the path the player is on to the actual optimal path and recommends adjustments to player direction.*/
+            Vector2Int currentDir = new Vector2Int(Mathf.RoundToInt(transform.forward.x), Mathf.RoundToInt(transform.forward.z)); // discretizes the current player position
+            Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z)); // discretizes the current player position
+
+            // The path to follow
+            List<Vector2Int> pathToFollow = new List<Vector2Int>();
+
+            // I set tjh pathToFollow usiong ternary conditional operator
+            pathToFollow = (!path.Contains(currentPos) ? IsPathBlocked(currentPos) : path);
+
+            foreach (GameObject tile in previousGlowingTiles)
             {
-                GameObject obj = collider.gameObject;
-                
+                Material tileMaterial = (tile.tag == "Floor") ? tiledefMaterial : pathTileMaterial;
+
+                tile.GetComponent<Renderer>().material = tileMaterial; // Set to default material
             }
-            
+            // Clear the previous glowing tiles list
+            previousGlowingTiles.Clear();
 
-            // convert from Vector2Int to Vector 2
-            Vector2 a = new Vector2(currentDir.x, currentDir.y);
-            Vector2 b = new Vector2(differenceVector.x, differenceVector.y);
-            b.Normalize();
+            GameObject[] floorTiles = GameObject.FindGameObjectsWithTag("Floor");
 
-            // find angle in Betweeen two vectors
-            float angleBetween = findAngle(a, b);
-            ProvideDirection(angleBetween, false);
-        }
-
-        // if player is on track
-        if (path.Contains(currentPos))
-        {
-            int currentPosIndex = path.IndexOf(currentPos);
-            Vector2Int nearestPos = path[currentPosIndex + 1];
-            Vector2Int differenceVector = nearestPos - currentPos;
-
-            // convert from Vector2Int to Vector 2
-            Vector2 a = new Vector2(currentDir.x, currentDir.y);
-            Vector2 b = new Vector2(differenceVector.x, differenceVector.y);
-
-            // find angle in Betweeen two vectors
-            float angleBetween = findAngle(a, b);
-            ProvideDirection(angleBetween,true);
+            foreach (Vector2Int pathTile in pathToFollow)
+            {
+                foreach (GameObject floorTile in floorTiles)
+                {
+                    Vector2Int floorTilePos = new Vector2Int(Mathf.RoundToInt(floorTile.transform.position.x), Mathf.RoundToInt(floorTile.transform.position.z));
+                    if (floorTilePos == pathTile)
+                    {
+                        floorTile.GetComponent<Renderer>().material = glowMaterial;
+                        previousGlowingTiles.Add(floorTile);
+                        break;
+                    }
+                }
+            }
         }
     }
 
+    /* Essential for the Haptic Feedback as it finds the direction the player needs to turn, based on the direction they're facing.
+     * Mainly used in FollowPath().
+    */
     float findAngle(Vector2 currentVector, Vector2 targetVector) {
 
-        /* Essential for the Haptic Feedback as it finds the direction the player needs to turn, based on the direction they're facing.
-        */
+
 
         float currentAngle = Mathf.Atan2(currentVector.y, currentVector.x);
         float targetAngle = Mathf.Atan2(targetVector.y, targetVector.x);
@@ -118,46 +173,10 @@ public class PlayerController : MonoBehaviour
         return angledif;
     }
 
-
-    Vector2Int FindValidPathPoint(Vector2Int currentPos)
-    {
-        List<Vector2Int> path = new List<Vector2Int>();
-       
-        foreach (GameObject tile in previousGlowingTiles)
-        {
-            tile.GetComponent<Renderer>().material = tiledefMaterial; // Set to default material
-        }
-        // Clear the previous glowing tiles list
-        previousGlowingTiles.Clear();
-        path = IsPathBlocked(currentPos);
-        Vector2Int lastElement = path[path.Count - 1];
-        Debug.Log("Last element of path: " + lastElement);
-        path.RemoveAt(path.Count - 1);
-
-        Debug.Log("START of PATH ");
-        foreach (Vector2Int pathTile in path)
-        {
-            GameObject[] tiles = GameObject.FindGameObjectsWithTag("Floor");
-
-            foreach(GameObject tile in tiles)
-            {
-                Vector2Int tilePos = new Vector2Int(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.z));
-                if( tilePos.x == pathTile.x && tilePos.y == pathTile.y)
-                {
-                    Debug.Log(tile);
-                    tile.GetComponent<Renderer>().material = glowMaterial;
-                    previousGlowingTiles.Add(tile);
-                }
-            }
-
-       
-        }
-        Debug.Log("END OF PATH");
-        return lastElement;
-
-
-    }
-
+    /* BFS Function that finds the nearest `solutionPath` tile to the player. This function is called when the player is lost 
+     * and is off the `solutionTiles`.It will avoid walls and find the shortest path to the nearest tile. 
+     * uses ReconstructPath() to find the actual path itself.
+    */
     List<Vector2Int> IsPathBlocked(Vector2Int startPos)
     {
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
@@ -189,12 +208,19 @@ public class PlayerController : MonoBehaviour
         return null;
     }
 
-
+    /* 
+     * Used in IsPathBlocked to determine if ta tile is out of maze bounds
+    */
     bool IsInBounds(Vector2Int pos , int mazeWidth, int mazeHeight)
     {
         return pos.x >=0 && pos.x < mazeWidth && pos.y >=0 && pos.y < mazeHeight;
     }
 
+
+    /* 
+     * Builds up the path from startPos to endPos.
+     * Used in IsPathBlocked()
+    */
     List<Vector2Int> ReconstructPath(Dictionary<Vector2Int, Vector2Int> parent, Vector2Int startPos, Vector2Int endPos)
     {
         List<Vector2Int> path = new List<Vector2Int>();
@@ -225,17 +251,20 @@ public class PlayerController : MonoBehaviour
         {
             // we hard coded this value because the left controller was feeling a bit weaker, so we gave it a higher amplitude
             hapticLeft?.SendHaptics(.5f * amplitude, duration, frequency);
+            Debug.Log("LEFT");
 
         }
         else if (angleBetween < 0)
         {
             hapticRight?.SendHaptics(amplitude, duration, frequency);
+            Debug.Log("RIGHT");
         }
         else if (angleBetween == 0) //angleBetween >= -0.7853981f && angleBetween <= 0.7853981f
     {
             // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
             hapticLeft?.SendHaptics(amplitude, duration, frequency);
             hapticRight?.SendHaptics(amplitude*2f, duration, frequency);
+            Debug.Log("STRAIGHT");
         }
 
     }
@@ -270,41 +299,3 @@ public class PlayerController : MonoBehaviour
     }*/
 }
 
-
-
-/*List<Vector2Int> openList = new List<Vector2Int>();
-       HashSet<Vector2Int> closedList = new HashSet<Vector2Int>();
-
-       openList.Add(startPos);
-
-       while (openList.Count > 0)
-       {
-           Vector2Int currentPos = openList[0];
-           openList.RemoveAt(0);
-
-           if(currentPos == endPos)
-           {
-               return false;
-           }
-           closedList.Add(currentPos);
-           List<Vector2Int> neighbors = GetNeighbors(currentPos);
-
-           foreach (Vector2Int neighbor in neighbors)
-           {
-               if(nonwalkables.Contains(neighbor) || closedList.Contains(neighbor))
-               {
-                   continue;
-               }
-
-               if (!openList.Contains(neighbor))
-               {
-                   openList.Add(neighbor);
-               }
-           }
-           if (openList.Count == 0)
-           {
-               break;
-           }
-       }
-
-       return true;*/
