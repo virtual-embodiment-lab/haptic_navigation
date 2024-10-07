@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
 {
+    public Material tiledefMaterial;
     public Material glowMaterial;
     public GameObject cubePrefab;
     public GameObject boundPrefab;
@@ -20,20 +21,28 @@ public class MazeGenerator : MonoBehaviour
 
     public static Vector2Int[][] paths = new Vector2Int[][]
     {
-      new Vector2Int[] {
+        new Vector2Int[] {
         new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0), new Vector2Int(2, 1),
         new Vector2Int(2, 2), new Vector2Int(3, 2), new Vector2Int(3, 3), new Vector2Int(3, 4),
         new Vector2Int(3, 5), new Vector2Int(4, 5), new Vector2Int(4, 6), new Vector2Int(5, 6),
         new Vector2Int(6, 6), new Vector2Int(6, 7), new Vector2Int(6, 8), new Vector2Int(6, 9),
         new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9)
-    },
-      new Vector2Int[] {
-        new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0), new Vector2Int(2, 1),
-        new Vector2Int(2, 2), new Vector2Int(3, 2), new Vector2Int(3, 3), new Vector2Int(3, 4),
-        new Vector2Int(3, 5), new Vector2Int(4, 5), new Vector2Int(4, 6), new Vector2Int(5, 6),
-        new Vector2Int(6, 6), new Vector2Int(6, 7), new Vector2Int(6, 8), new Vector2Int(6, 9),
-        new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9)
-       }
+       },
+        new Vector2Int[]
+        {
+            new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(0, 2), new Vector2Int(1, 2),
+            new Vector2Int(1, 3), new Vector2Int(1, 4), new Vector2Int(1, 5), new Vector2Int(1, 6),
+            new Vector2Int(0, 6), new Vector2Int(0, 7), new Vector2Int(0, 8), new Vector2Int(0, 9),
+            new Vector2Int(1, 9), new Vector2Int(2, 9), new Vector2Int(3, 9), new Vector2Int(3, 8),
+            new Vector2Int(4, 8), new Vector2Int(4, 7), new Vector2Int(4, 6), new Vector2Int(4, 5),
+            new Vector2Int(3, 5), new Vector2Int(3, 4), new Vector2Int(3, 3), new Vector2Int(3, 2),
+            new Vector2Int(4, 2), new Vector2Int(4, 1), new Vector2Int(5, 1), new Vector2Int(6, 1),
+            new Vector2Int(7, 1), new Vector2Int(8, 1), new Vector2Int(9, 1), new Vector2Int(9, 2),
+            new Vector2Int(9, 3), new Vector2Int(9, 4), new Vector2Int(8, 4), new Vector2Int(7, 4),
+            new Vector2Int(7, 5), new Vector2Int(7, 6), new Vector2Int(7, 7), new Vector2Int(8, 7),
+            new Vector2Int(9, 7), new Vector2Int(9, 8), new Vector2Int(9, 9)
+        },
+     
     }; // List of solution paths
     public static Vector2Int[][] nonwalkables = new Vector2Int[][]
     {
@@ -47,7 +56,7 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(1, 7), new Vector2Int(5, 7), new Vector2Int(7, 7), new Vector2Int(0, 8),
             new Vector2Int(3, 8), new Vector2Int(5, 8), new Vector2Int(7, 8), new Vector2Int(8, 8),
             new Vector2Int(0, 9), new Vector2Int(3, 9), new Vector2Int(5, 9),
-            new Vector2Int(1,7), new Vector2Int(2, 7), new Vector2Int(3, 7), new Vector2Int(4, 7), new Vector2Int(5, 7)
+            /*new Vector2Int(1,7), new Vector2Int(2, 7), new Vector2Int(3, 7), new Vector2Int(4, 7), new Vector2Int(5, 7)*/
 
 
         },
@@ -115,11 +124,18 @@ public class MazeGenerator : MonoBehaviour
             {
                 // Instantiate floor at every grid position
                 GameObject tile = Instantiate(boundPrefab, new Vector3(x, -offset, y), Quaternion.identity);
+                // Name the tile based on its grid coordinates
+                tile.tag = "Floor";
+                tile.name = $"Tile_{x}_{y}";
+                tile.GetComponent<Renderer>().material = tiledefMaterial;
+
+
 
                 // GLOW - UNCOMMENT TO LIGHT UP SOLUTION PATH
                 if (path.Contains(new Vector2Int(x, y)))
                 {
                     tile.GetComponent<Renderer>().material = glowMaterial;
+
                 }
                 // GLOW 
 

@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     public float duration;
     bool isPulsing;
     public MazeGenerator mazeGenerator;
+    public Material glowMaterial;
+    public Material tiledefMaterial;
+    List<GameObject> previousGlowingTiles = new List<GameObject>();
 
 
     void Start()
@@ -65,9 +68,7 @@ public class PlayerController : MonoBehaviour
         if (!path.Contains(currentPos))
         {
            
-
             Vector2Int nearestPos = FindValidPathPoint(currentPos);
-            Debug.Log(nearestPos);
             Vector2Int differenceVector = nearestPos - currentPos;
             Collider[] colliders = Physics.OverlapSphere(new Vector2(nearestPos.x, nearestPos.y), 0.1f);
             foreach(Collider collider in colliders)
@@ -117,87 +118,75 @@ public class PlayerController : MonoBehaviour
         return angledif;
     }
 
-    Vector2Int FindNearestPathPoint(Vector2Int currentPos)
-    {
-       /* Checks the set of points in `path` and finds the closest one to `currentPos`.*/
-
-        Vector2Int nearestPoint = new Vector2Int();
-        float minDistance = float.MaxValue;
-
-        foreach (Vector2Int point in path)
-        {
-            float distance = Vector2.Distance(currentPos, point);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearestPoint = point;
-            }
-        }
-       /* bool blocked = IsPathBlocked(currentPos, nearestPoint);*/
-      
-        return nearestPoint;
-    }
-
 
     Vector2Int FindValidPathPoint(Vector2Int currentPos)
     {
-        List<Vector2Int> sortedPathPoints = path.OrderBy(point => Vector2.Distance(currentPos, point)).ToList();
-        float minDistance = float.MaxValue;
-        float tempdist;
-        Vector2Int nearestPoint = new Vector2Int();
-        
-
-        foreach (Vector2Int pathPoint in path)
+        List<Vector2Int> path = new List<Vector2Int>();
+       
+        foreach (GameObject tile in previousGlowingTiles)
         {
-            tempdist = IsPathBlocked(currentPos, pathPoint);
-          
-            if (tempdist != -1)
-            {
-                if (tempdist < minDistance)
-                {
-                    minDistance = tempdist;
-                    nearestPoint = pathPoint;
-                } 
-            }
+            tile.GetComponent<Renderer>().material = tiledefMaterial; // Set to default material
         }
-      
-        return nearestPoint;
-        Debug.Log("FAILURE");
-        return new Vector2Int(-1, -1);
-        
-    }
+        // Clear the previous glowing tiles list
+        previousGlowingTiles.Clear();
+        path = IsPathBlocked(currentPos);
+        Vector2Int lastElement = path[path.Count - 1];
+        Debug.Log("Last element of path: " + lastElement);
+        path.RemoveAt(path.Count - 1);
 
-    int IsPathBlocked(Vector2Int startPos, Vector2Int endPos)
-    {
-        Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
-
-        queue.Enqueue(startPos);
-        int distance = 0;
-        visited.Add(startPos);
-
-        while(queue.Count > 0)
+        Debug.Log("START of PATH ");
+        foreach (Vector2Int pathTile in path)
         {
-            int levelSize = queue.Count;
+            GameObject[] tiles = GameObject.FindGameObjectsWithTag("Floor");
 
-            for (int i = 0; i <levelSize; i++)
+            foreach(GameObject tile in tiles)
             {
-                Vector2Int currentPos = queue.Dequeue();
-                if (currentPos == endPos)
-                { return distance; }
-
-                foreach (Vector2Int neighbor in GetNeighbors(currentPos))
+                Vector2Int tilePos = new Vector2Int(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.z));
+                if( tilePos.x == pathTile.x && tilePos.y == pathTile.y)
                 {
-                    if (!IsInBounds(neighbor, 10, 10) || visited.Contains(neighbor)) { continue; }
-                    if (nonwalkables.Contains(neighbor)) { continue; }
-                    queue.Enqueue(neighbor);
-                    visited.Add(neighbor);
+                    Debug.Log(tile);
+                    tile.GetComponent<Renderer>().material = glowMaterial;
+                    previousGlowingTiles.Add(tile);
                 }
             }
-          
-            distance++;
+
+       
         }
-        return -1;
+        Debug.Log("END OF PATH");
+        return lastElement;
+
+
+    }
+
+    List<Vector2Int> IsPathBlocked(Vector2Int startPos)
+    {
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        Dictionary<Vector2Int, Vector2Int> parent = new Dictionary<Vector2Int, Vector2Int>();
+        queue.Enqueue(startPos);
+        parent[startPos] = startPos; // Root has itself as its parent
+
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+
+            if (path.Contains(current))
+            {
+                return ReconstructPath(parent, startPos, current);
+            }
+
+            foreach (Vector2Int dir in directions)
+            {
+                Vector2Int neighbor = current + dir;
+                if (IsInBounds(neighbor,10,10) && !parent.ContainsKey(neighbor) && !nonwalkables.Contains(neighbor)) // might want to talk about nonwalkables
+                {
+                    queue.Enqueue(neighbor);
+                    parent[neighbor] = current;
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -206,16 +195,21 @@ public class PlayerController : MonoBehaviour
         return pos.x >=0 && pos.x < mazeWidth && pos.y >=0 && pos.y < mazeHeight;
     }
 
-    List<Vector2Int> GetNeighbors(Vector2Int currentPos)
+    List<Vector2Int> ReconstructPath(Dictionary<Vector2Int, Vector2Int> parent, Vector2Int startPos, Vector2Int endPos)
     {
-        List<Vector2Int> neighbors = new List<Vector2Int>();
+        List<Vector2Int> path = new List<Vector2Int>();
+        Vector2Int current = endPos;
+        while (current != startPos) 
+        { 
+            path.Add(current);
+            current = parent[current];
+        }
+        path.Add(startPos); // Add the start position at the end of the path list
 
-        neighbors.Add(new Vector2Int(currentPos.x + 1, currentPos.y));
-        neighbors.Add(new Vector2Int(currentPos.x - 1, currentPos.y));
-        neighbors.Add(new Vector2Int(currentPos.x , currentPos.y + 1));
-        neighbors.Add(new Vector2Int(currentPos.x , currentPos.y + 1));
-        return neighbors;
+        path.Reverse(); // Reverse to get the path from start to end
+        return path;
     }
+  
 
     void ProvideDirection(float angleBetween, bool onTrack)
     {

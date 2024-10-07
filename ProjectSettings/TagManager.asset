@@ -8,6 +8,8 @@ TagManager:
   - LeftController
   - XROrigin
   - Wall
+  - CinemachineTarget
+  - Floor
   layers:
   - Default
   - TransparentFX
