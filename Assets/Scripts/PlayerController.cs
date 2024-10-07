@@ -41,8 +41,8 @@ public class PlayerController : MonoBehaviour
     {
         /* Gets the path and the walls (nonwalkables) from the MazeGenerator Script*/
         
-        path = MazeGenerator.paths[3].ToList(); 
-        nonwalkables = MazeGenerator.nonwalkables[3].ToList();
+        path = MazeGenerator.paths[2].ToList(); 
+        nonwalkables = MazeGenerator.nonwalkables[2].ToList();
 
         /* Sets the Position and Direction of the VR headset */
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);

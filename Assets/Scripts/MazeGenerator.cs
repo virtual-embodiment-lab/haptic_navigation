@@ -51,7 +51,7 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(6, 0), new Vector2Int(7, 0), new Vector2Int(8, 0), new Vector2Int(9, 0),
             new Vector2Int(9, 1), new Vector2Int(9, 2), new Vector2Int(9, 3), new Vector2Int(8, 3),
             new Vector2Int(8, 4), new Vector2Int(7, 4), new Vector2Int(6, 4), new Vector2Int(5, 4),
-            new Vector2Int(5, 3), new Vector2Int(4, 3), new Vector2Int(3, 3), new Vector2Int(2, 3),
+             new Vector2Int(4, 4), new Vector2Int(3, 4), 
             new Vector2Int(2, 4), new Vector2Int(1, 4), new Vector2Int(1, 5), new Vector2Int(1, 6),
             new Vector2Int(1, 7), new Vector2Int(1, 8), new Vector2Int(1, 9), new Vector2Int(2, 9),
             new Vector2Int(3, 9), new Vector2Int(4, 9), new Vector2Int(4, 8), new Vector2Int(4, 7),
@@ -108,7 +108,7 @@ public class MazeGenerator : MonoBehaviour
     private void Awake()
     {
         /*choice = (mazeType == MazeType.Maze0) ? 0 : 1;*/
-        choice = 3;
+        choice = 2;
     }
 
     void Start()
