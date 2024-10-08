@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     public MazeGenerator mazeGenerator; // pulls from the MazeGenerator Script
 
     /* MAZE Highlight Variables */
-    public bool isHighlight; 
+    public bool isHighlight;
     public Material glowMaterial;
     public Material tiledefMaterial;
     public Material pathTileMaterial;
@@ -40,9 +40,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         /* Gets the path and the walls (nonwalkables) from the MazeGenerator Script*/
-        
-        path = MazeGenerator.paths[2].ToList(); 
-        nonwalkables = MazeGenerator.nonwalkables[2].ToList();
+
+        path = MazeGenerator.paths[MazeGenerator.choice].ToList();
+        nonwalkables = MazeGenerator.nonwalkables[MazeGenerator.choice].ToList();
 
         /* Sets the Position and Direction of the VR headset */
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
             hapticLeft = leftController.GetComponent<HapticController>();
             hapticRight = rightController.GetComponent<HapticController>();
         }
-        
+
         FollowPath();
         HighlightPath();
     }
@@ -89,11 +89,11 @@ public class PlayerController : MonoBehaviour
      */
     void FollowPath()
     {
-      
+
         /* Get the player direction and positions */
         Vector2Int currentDir = new Vector2Int(Mathf.RoundToInt(transform.forward.x), Mathf.RoundToInt(transform.forward.z)); // discretizes the current player position
         Vector2Int currentPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z)); // discretizes the current player position
-        
+
         List<Vector2Int> pathToFollow = new List<Vector2Int>();
 
         // I set tjh pathToFollow usiong ternary conditional operator
@@ -161,7 +161,8 @@ public class PlayerController : MonoBehaviour
     /* Essential for the Haptic Feedback as it finds the direction the player needs to turn, based on the direction they're facing.
      * Mainly used in FollowPath().
     */
-    float findAngle(Vector2 currentVector, Vector2 targetVector) {
+    float findAngle(Vector2 currentVector, Vector2 targetVector)
+    {
 
 
 
@@ -169,7 +170,7 @@ public class PlayerController : MonoBehaviour
         float targetAngle = Mathf.Atan2(targetVector.y, targetVector.x);
         float angledif = targetAngle - currentAngle;
         angledif = Mathf.Atan2(Mathf.Sin(angledif), Mathf.Cos(angledif));
-        
+
         return angledif;
     }
 
@@ -198,7 +199,7 @@ public class PlayerController : MonoBehaviour
             foreach (Vector2Int dir in directions)
             {
                 Vector2Int neighbor = current + dir;
-                if (IsInBounds(neighbor,10,10) && !parent.ContainsKey(neighbor) && !nonwalkables.Contains(neighbor)) // might want to talk about nonwalkables
+                if (IsInBounds(neighbor, 10, 10) && !parent.ContainsKey(neighbor) && !nonwalkables.Contains(neighbor)) // might want to talk about nonwalkables
                 {
                     queue.Enqueue(neighbor);
                     parent[neighbor] = current;
@@ -211,9 +212,9 @@ public class PlayerController : MonoBehaviour
     /* 
      * Used in IsPathBlocked to determine if ta tile is out of maze bounds
     */
-    bool IsInBounds(Vector2Int pos , int mazeWidth, int mazeHeight)
+    bool IsInBounds(Vector2Int pos, int mazeWidth, int mazeHeight)
     {
-        return pos.x >=0 && pos.x < mazeWidth && pos.y >=0 && pos.y < mazeHeight;
+        return pos.x >= 0 && pos.x < mazeWidth && pos.y >= 0 && pos.y < mazeHeight;
     }
 
 
@@ -225,8 +226,8 @@ public class PlayerController : MonoBehaviour
     {
         List<Vector2Int> path = new List<Vector2Int>();
         Vector2Int current = endPos;
-        while (current != startPos) 
-        { 
+        while (current != startPos)
+        {
             path.Add(current);
             current = parent[current];
         }
@@ -235,7 +236,7 @@ public class PlayerController : MonoBehaviour
         path.Reverse(); // Reverse to get the path from start to end
         return path;
     }
-  
+
 
     void ProvideDirection(float angleBetween, bool onTrack)
     {
@@ -247,7 +248,7 @@ public class PlayerController : MonoBehaviour
         duration = .1f;
         frequency = .1f;
 
-    if (angleBetween > 0)
+        if (angleBetween > 0)
         {
             // we hard coded this value because the left controller was feeling a bit weaker, so we gave it a higher amplitude
             hapticLeft?.SendHaptics(amplitude, duration, frequency);
@@ -260,7 +261,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("RIGHT");
         }
         else if (angleBetween == 0) //angleBetween >= -0.7853981f && angleBetween <= 0.7853981f
-    {
+        {
             // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
             hapticLeft?.SendHaptics(amplitude, duration, frequency);
             hapticRight?.SendHaptics(amplitude, duration, frequency);
@@ -298,4 +299,3 @@ public class PlayerController : MonoBehaviour
 
     }*/
 }
-

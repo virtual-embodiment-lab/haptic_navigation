@@ -14,7 +14,7 @@ public class MazeGenerator : MonoBehaviour
     public GameObject boundPrefab;
     private bool[,] gridOccupied = new bool[10, 10]; // Track occupied positions
     [SerializeField]
-    public int choice;
+    public static int choice;
 
 
     /* Currently there are two mazes represented by the:
@@ -108,7 +108,7 @@ public class MazeGenerator : MonoBehaviour
     private void Awake()
     {
         /*choice = (mazeType == MazeType.Maze0) ? 0 : 1;*/
-        choice = 2;
+        choice = 3;
     }
 
     void Start()
@@ -155,6 +155,7 @@ public class MazeGenerator : MonoBehaviour
                 if (path.Contains(new Vector2Int(x, y)))
                 {
                     tile.tag = "PathTile";
+                    /*tile.GetComponent<Renderer>().material = tiledefMaterial;*/
                     tile.GetComponent<Renderer>().material = pathTileMaterial;
 
                 }

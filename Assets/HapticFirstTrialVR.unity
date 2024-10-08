@@ -249,7 +249,7 @@ PrefabInstance:
       objectReference: {fileID: 888299409}
     - target: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_CameraYOffset
-      value: 0.3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_RequestedTrackingOriginMode
@@ -644,7 +644,6 @@ MonoBehaviour:
   pathTileMaterial: {fileID: 2100000, guid: 16787696499133042b501ccfcb2f6996, type: 2}
   cubePrefab: {fileID: 1653394170131430231}
   boundPrefab: {fileID: 1942749468}
-  choice: 0
   mazeType: 1
 --- !u!4 &292345036
 Transform:
@@ -1730,10 +1729,10 @@ MonoBehaviour:
   camera: {fileID: 0}
   cameraDir: {x: 0, y: 0, z: 0}
   mazeGenerator: {fileID: 0}
-  isHighlight: 1
-  glowMaterial: {fileID: 2100000, guid: 152d5195502da5a4bb7934131100890b, type: 2}
-  tiledefMaterial: {fileID: 2100000, guid: f5809fe1b2b5a0e43b42bbba7dd233db, type: 2}
-  pathTileMaterial: {fileID: 2100000, guid: 16787696499133042b501ccfcb2f6996, type: 2}
+  isHighlight: 0
+  glowMaterial: {fileID: 0}
+  tiledefMaterial: {fileID: 0}
+  pathTileMaterial: {fileID: 0}
 --- !u!114 &1674047972
 MonoBehaviour:
   m_ObjectHideFlags: 0
