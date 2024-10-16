@@ -31,7 +31,7 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9)
         },
         new Vector2Int[]
-        {
+        {// MAZE 1
             new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(0, 2), new Vector2Int(1, 2),
             new Vector2Int(1, 3), new Vector2Int(1, 4), new Vector2Int(1, 5), new Vector2Int(1, 6),
             new Vector2Int(0, 6), new Vector2Int(0, 7), new Vector2Int(0, 8), new Vector2Int(0, 9),
@@ -45,7 +45,7 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(9, 7), new Vector2Int(9, 8), new Vector2Int(9, 9)
         },
         new Vector2Int[]
-        {
+        {// MAZE 2
             new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0), new Vector2Int(2, 1),
             new Vector2Int(3, 1), new Vector2Int(4, 1), new Vector2Int(5, 1), new Vector2Int(6, 1),
             new Vector2Int(6, 0), new Vector2Int(7, 0), new Vector2Int(8, 0), new Vector2Int(9, 0),
@@ -59,13 +59,13 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9)
         },
         new Vector2Int[]
-        {
+        {// MAZE 3
             new Vector2Int(0, 9), new Vector2Int(1, 9), new Vector2Int(2, 9), new Vector2Int(2, 8),
             new Vector2Int(3, 8), new Vector2Int(4, 8), new Vector2Int(5, 8), new Vector2Int(6, 8),
             new Vector2Int(6, 9), new Vector2Int(7, 9), new Vector2Int(8, 9), new Vector2Int(9, 9),
             new Vector2Int(9, 8), new Vector2Int(9, 7), new Vector2Int(9, 6), new Vector2Int(8, 6),
             new Vector2Int(8, 5), new Vector2Int(7, 5), new Vector2Int(6, 5), new Vector2Int(5, 5),
-            new Vector2Int(5, 6), new Vector2Int(4, 6), new Vector2Int(3, 6), new Vector2Int(2, 6),
+            new Vector2Int(4, 5), new Vector2Int(3, 5),
             new Vector2Int(2, 5), new Vector2Int(1, 5), new Vector2Int(1, 4), new Vector2Int(1, 3),
             new Vector2Int(1, 2), new Vector2Int(1, 1), new Vector2Int(1, 0), new Vector2Int(2, 0),
             new Vector2Int(3, 0), new Vector2Int(4, 0), new Vector2Int(4, 1), new Vector2Int(4, 2),
