@@ -37,7 +37,7 @@ public class MazeGenerator : MonoBehaviour
             new Vector2Int(0, 6), new Vector2Int(0, 7), new Vector2Int(0, 8), new Vector2Int(0, 9),
             new Vector2Int(1, 9), new Vector2Int(2, 9), new Vector2Int(3, 9), new Vector2Int(3, 8),
             new Vector2Int(4, 8), new Vector2Int(4, 7), new Vector2Int(4, 6), new Vector2Int(4, 5),
-            new Vector2Int(3, 5), new Vector2Int(3, 4), new Vector2Int(3, 3), new Vector2Int(3, 2),
+            new Vector2Int(4, 4), new Vector2Int(4, 3),
             new Vector2Int(4, 2), new Vector2Int(4, 1), new Vector2Int(5, 1), new Vector2Int(6, 1),
             new Vector2Int(7, 1), new Vector2Int(8, 1), new Vector2Int(9, 1), new Vector2Int(9, 2),
             new Vector2Int(9, 3), new Vector2Int(9, 4), new Vector2Int(8, 4), new Vector2Int(7, 4),
@@ -108,7 +108,7 @@ public class MazeGenerator : MonoBehaviour
     private void Awake()
     {
         /*choice = (mazeType == MazeType.Maze0) ? 0 : 1;*/
-        choice = 3;
+        choice = 2;
     }
 
     void Start()
@@ -151,11 +151,14 @@ public class MazeGenerator : MonoBehaviour
                 tile.name = $"Tile_{x}_{y}";
                 
 
-                // GLOW - UNCOMMENT TO LIGHT UP SOLUTION PATH
+                // GLOW
                 if (path.Contains(new Vector2Int(x, y)))
                 {
                     tile.tag = "PathTile";
+                    //when COMMENTED, shows solution path.
                     /*tile.GetComponent<Renderer>().material = tiledefMaterial;*/
+
+                    //when UNCOMMENTED, shows solution path
                     tile.GetComponent<Renderer>().material = pathTileMaterial;
 
                 }
@@ -164,7 +167,6 @@ public class MazeGenerator : MonoBehaviour
                     tile.tag = "Floor";
                     tile.GetComponent<Renderer>().material = tiledefMaterial;
                 }
-                // GLOW 
 
                 // Check if the position is on the boundary of the grid
                 if (x == 0 || x == bounds.x - 1 || y == 0 || y == bounds.y - 1)
