@@ -108,7 +108,7 @@ public class MazeGenerator : MonoBehaviour
     private void Awake()
     {
         /*choice = (mazeType == MazeType.Maze0) ? 0 : 1;*/
-        choice = 2;
+        choice = 1;
     }
 
     void Start()

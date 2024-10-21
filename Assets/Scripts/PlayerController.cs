@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -238,39 +239,39 @@ public class PlayerController : MonoBehaviour
     }
 
     // HAND HOLDING CONDITION
-    /*    void ProvideDirection(float angleBetween, bool onTrack)
-        {
-            *//*Sends different vibration specs depending on whether the player is on the right path or not*//*
-
-            float amplitude;
-
-            amplitude = 1f;
-            duration = .1f;
-            frequency = .1f;
-
-            if (angleBetween > 0)
-            {
-                // we hard coded this value because the left controller was feeling a bit weaker, so we gave it a higher amplitude
-                hapticLeft?.SendHaptics(amplitude, duration, frequency);
-                Debug.Log("LEFT");
-
-            }
-            else if (angleBetween < 0)
-            {
-                hapticRight?.SendHaptics(amplitude, duration, frequency);
-                Debug.Log("RIGHT");
-            }
-            else if (angleBetween == 0) //angleBetween >= -0.7853981f && angleBetween <= 0.7853981f
-            {
-                // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
-                hapticLeft?.SendHaptics(amplitude, duration, frequency);
-                hapticRight?.SendHaptics(amplitude, duration, frequency);
-                Debug.Log("STRAIGHT");
-            }
-
-        }*/
-    // GPS 
     void ProvideDirection(float angleBetween, bool onTrack)
+    {
+        //Sends different vibration specs depending on whether the player is on the right path or not
+
+        float amplitude;
+
+        amplitude = 1f;
+        duration = .1f;
+        frequency = .1f;
+
+        if (angleBetween > 0)
+        {
+            // we hard coded this value because the left controller was feeling a bit weaker, so we gave it a higher amplitude
+            hapticLeft?.SendHaptics(amplitude, duration, frequency);
+            Debug.Log("LEFT");
+
+        }
+        else if (angleBetween < 0)
+        {
+            hapticRight?.SendHaptics(amplitude, duration, frequency);
+            Debug.Log("RIGHT");
+        }
+        else if (angleBetween == 0) //angleBetween >= -0.7853981f && angleBetween <= 0.7853981f
+        {
+            // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
+            hapticLeft?.SendHaptics(amplitude, duration, frequency);
+            hapticRight?.SendHaptics(amplitude, duration, frequency);
+            Debug.Log("STRAIGHT");
+        }
+
+    }
+    // GPS 
+    /*void ProvideDirection(float angleBetween, bool onTrack)
     {
         
 
@@ -297,5 +298,5 @@ public class PlayerController : MonoBehaviour
             isPulsing = true;
         }
 
-    }
+    }*/
 }
