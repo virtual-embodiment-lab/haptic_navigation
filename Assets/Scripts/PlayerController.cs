@@ -239,7 +239,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // HAND HOLDING CONDITION
-    void ProvideDirection(float angleBetween, bool onTrack)
+    /*void ProvideDirection(float angleBetween, bool onTrack)
     {
         //Sends different vibration specs depending on whether the player is on the right path or not
 
@@ -269,11 +269,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("STRAIGHT");
         }
 
-    }
+    }*/
     // GPS 
-    /*void ProvideDirection(float angleBetween, bool onTrack)
+    void ProvideDirection(float angleBetween, bool onTrack)
     {
-        
+
 
         float amplitude;
         amplitude = .3f;
@@ -290,13 +290,13 @@ public class PlayerController : MonoBehaviour
             hapticRight?.SendHaptics(amplitude * 2f, 1f, 1f);
             isPulsing = false;
         }
-        else if (angleBetween == 0 && isPulsing == false) 
-                {
+        else if (angleBetween == 0 && isPulsing == false)
+        {
             // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
             hapticLeft?.SendHaptics(amplitude * 2f, 1f, 1f);
             hapticRight?.SendHaptics(amplitude * 2f, 1f, 1f);
             isPulsing = true;
         }
 
-    }*/
+    }
 }

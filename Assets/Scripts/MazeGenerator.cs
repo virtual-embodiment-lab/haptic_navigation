@@ -93,9 +93,12 @@ public class MazeGenerator : MonoBehaviour
         new Vector2Int[] {},
         new Vector2Int[] {},
         new Vector2Int[] {},
-    }; 
+    };
 
-    
+    public Camera vrCamera;
+    private string layerName = "NonVR";
+    private int layerIndex;
+    private Renderer objectRenderer;
 
     public enum MazeType
     {
@@ -108,14 +111,26 @@ public class MazeGenerator : MonoBehaviour
     private void Awake()
     {
         /*choice = (mazeType == MazeType.Maze0) ? 0 : 1;*/
-        choice = 1;
+        choice = 3;
     }
 
     void Start()
     {
-
+        layerIndex = LayerMask.NameToLayer(layerName);
+       
+        /*if (layerIndex == -1)
+        {
+            Debug.Log("Layer '" + layerName + "' does not exist");
+            return;
+        }
+        else
+        {
+            Debug.Log("it exists");
+        }
+        vrCamera.cullingMask &= (1 << layerIndex);*/
         DrawGrid();
         GenerateBounds();
+        
 
     }
     void DrawGrid()
@@ -133,7 +148,7 @@ public class MazeGenerator : MonoBehaviour
     {
         /* Very Long and Convoluted function that essentially just draws the borders and ground of the maze. 
          * The most important take away is that TO LIGHT UP THE SOLUTION PATH TO THE MAZE uncomment the block that says " GLOW" */
-
+       
 
         List<Vector2Int> path = paths[choice].ToList();
         Renderer prefabRenderer = cubePrefab.GetComponent<Renderer>();
@@ -155,17 +170,21 @@ public class MazeGenerator : MonoBehaviour
                 if (path.Contains(new Vector2Int(x, y)))
                 {
                     tile.tag = "PathTile";
+                    tile.layer = layerIndex;
                     //when COMMENTED, shows solution path.
                     /*tile.GetComponent<Renderer>().material = tiledefMaterial;*/
 
                     //when UNCOMMENTED, shows solution path
                     tile.GetComponent<Renderer>().material = pathTileMaterial;
 
+                    tile.layer = layerIndex;
+
                 }
                 else
                 {
                     tile.tag = "Floor";
                     tile.GetComponent<Renderer>().material = tiledefMaterial;
+                    tile.layer = 0;
                 }
 
                 // Check if the position is on the boundary of the grid
