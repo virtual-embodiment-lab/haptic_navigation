@@ -111,7 +111,7 @@ public class MazeGenerator : MonoBehaviour
     private void Awake()
     {
         /*choice = (mazeType == MazeType.Maze0) ? 0 : 1;*/
-        choice = 3;
+        choice = 1;
     }
 
     void Start()
@@ -172,7 +172,7 @@ public class MazeGenerator : MonoBehaviour
                     tile.tag = "PathTile";
                     tile.layer = layerIndex;
                     //when COMMENTED, shows solution path.
-                    /*tile.GetComponent<Renderer>().material = tiledefMaterial;*/
+                   /* tile.GetComponent<Renderer>().material = tiledefMaterial;*/
 
                     //when UNCOMMENTED, shows solution path
                     tile.GetComponent<Renderer>().material = pathTileMaterial;

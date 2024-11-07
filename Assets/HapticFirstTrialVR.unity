@@ -224,8 +224,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_AllowMSAA
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 153982007679157697, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_Enabled
@@ -650,6 +658,7 @@ MonoBehaviour:
   pathTileMaterial: {fileID: 2100000, guid: 16787696499133042b501ccfcb2f6996, type: 2}
   cubePrefab: {fileID: 1653394170131430231}
   boundPrefab: {fileID: 1942749468}
+  vrCamera: {fileID: 0}
   mazeType: 1
 --- !u!4 &292345036
 Transform:
