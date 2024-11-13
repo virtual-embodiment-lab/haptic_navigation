@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     List<Vector2Int> path;
     List<Vector2Int> nonwalkables;
     public MazeGenerator mazeGenerator; // pulls from the MazeGenerator Script
+    float lastAngleState;
 
     /* MAZE Highlight Variables */
     public bool isHighlight;
@@ -51,7 +52,7 @@ public class PlayerController : MonoBehaviour
         transform.forward = new Vector3(1f, transform.forward.y, 0f);
 
         /* For GPS System */
-        isPulsing = true;
+        isPulsing = false;
     }
 
 
@@ -60,7 +61,7 @@ public class PlayerController : MonoBehaviour
     */
     private void Update()
     {
-        Debug.Log(choice);
+        
         /* Gets the VR headset position  */
         camera = GameObject.FindWithTag("MainCamera");
         cameraDir = camera.transform.position;
@@ -110,6 +111,7 @@ public class PlayerController : MonoBehaviour
 
         // find angle in Betweeen two vectors
         float angleBetween = findAngle(a, b);
+        /*lastAngleState = angleBetween;*/
         ProvideDirection(angleBetween, false);
     }
 
@@ -239,7 +241,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // HAND HOLDING CONDITION
-/*    void ProvideDirection(float angleBetween, bool onTrack)
+    /*void ProvideDirection(float angleBetween, bool onTrack)
     {
         //Sends different vibration specs depending on whether the player is on the right path or not
 
@@ -273,33 +275,39 @@ public class PlayerController : MonoBehaviour
     // GPS 
     void ProvideDirection(float angleBetween, bool onTrack)
     {
+        // Set default haptic feedback parameters
+
+        float amplitude = 1f;
+        float duration = 0.1f;
+        float frequency = 0.1f;
+
+        // Check if there's been a change in direction from the last known angle state
+        bool hasChanged = lastAngleState != angleBetween;
+       /* Debug.Log((lastAngleState,angleBetween));*/
 
 
-        float amplitude;
-        amplitude = 1f;
-        duration = .1f;
-        frequency = .1f;
-
-        Debug.Log(isPulsing);
-        if (angleBetween > 0 && isPulsing == true)
+        // Send a single pulse based on angle change
+        if (hasChanged)
         {
+            if (angleBetween > 0)
+            {
+                hapticLeft?.SendHaptics(amplitude, duration, frequency);
+                Debug.Log("LEFT");
+            }
+            else if (angleBetween < 0)
+            {
+                hapticRight?.SendHaptics(amplitude, duration, frequency);
+                Debug.Log("RIGHT");
+            }
+            else if (angleBetween == 0)
+            {
+                hapticLeft?.SendHaptics(amplitude, duration, frequency);
+                hapticRight?.SendHaptics(amplitude, duration, frequency);
+                Debug.Log("STRAGIHJT");
+            }
 
-            hapticLeft?.SendHaptics(amplitude, duration, frequency);
-            isPulsing = false;
+            // Update lastAngleState to prevent continuous pulsing
+            lastAngleState = angleBetween;
         }
-        else if (angleBetween < 0 && isPulsing == true)
-        {
-
-            hapticRight?.SendHaptics(amplitude, duration, frequency);
-            isPulsing = false;
-        }
-        else if (angleBetween == 0 && isPulsing == false)
-        {
-            // Uncomment this code to activate CONSTANT FEEDBACK MECHANISM. When commented this GPS MECHANISM
-            hapticRight?.SendHaptics(amplitude, duration, frequency);
-            hapticRight?.SendHaptics(amplitude, duration, frequency);
-            isPulsing = true;
-        }
-
     }
 }
